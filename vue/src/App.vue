@@ -2,8 +2,11 @@
 </script>
 
 <template>
-<router-view></router-view>
+
+    <body class="bg-gray-900">
+
+        <router-view></router-view>
+    </body>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -2,14 +2,16 @@ import './assets/main.css'
 import './index.css'
 import { createApp } from 'vue'
 import App from './App.vue'
-import SignUp from './components/login/SignUp.vue'
-import Login from './components/login/LogIn.vue'
+import SignUp from './components/auth/SignUp.vue'
+import Login from './components/auth/LogIn.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
-
+import homePage from './components/homePage.vue'
 
 const routes = [
+    { path: '/', component: homePage },
     { path: '/login', component: Login },
     { path: '/signup', component: SignUp },
+    
 ]
 
 // 3. Create the router instance and pass the `routes` option
