@@ -40,6 +40,7 @@ class UserController extends Controller
 
         //Auth::attempt creates the session needed for auth if successful 
         if (Auth::attempt(['name' => $request->input("Username"), 'password' => $request->input("Password")])) {
+            error_log($request->user());
             return response(200, 200);
         } else {
             return response(json_encode("Invalid Username or Password."), 403);

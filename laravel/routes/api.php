@@ -1,8 +1,11 @@
 <?php
+
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
+use App\Events\NewMsgSent;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,8 +18,9 @@ use Illuminate\Support\Facades\Log;
 */
 
 Route::middleware('auth:sanctum')->get('/testauth', function (Request $request) {
+    error_log($request->user()->id);
+    NewMsgSent::dispatch();
     return "Authenticated";
 });
-
 Route::post('/users/signup', [UserController::class, 'signup']);
 Route::post('/users/login', [UserController::class, 'login']);

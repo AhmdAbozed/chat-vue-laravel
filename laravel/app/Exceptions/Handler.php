@@ -30,7 +30,7 @@ class Handler extends ExceptionHandler
     }
     public function report(Throwable $e)
     {
-        if (true) {
+        if (false) {
             //log to terminal, excluding the stack trace
             Log::error('['.$e->getCode().'] "'.$e->getMessage().'" on line '.$e->getTrace()[0]['line'].' of file '.$e->getTrace()[0]['file']);
         } else {
