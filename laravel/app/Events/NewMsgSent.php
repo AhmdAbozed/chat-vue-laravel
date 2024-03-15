@@ -14,14 +14,17 @@ use Illuminate\Foundation\Events\Dispatchable;
 class NewMsgSent implements ShouldBroadcast
 {
     use Dispatchable;
-    public $chat;
-    public function __construct()
+    public $channel_id;
+    public $content;
+    public function __construct($id, $message)
     {
-        $this->chat=(object) ['id' => 101];
+        $this->channel_id= $id;
+        
+        $this->content= $message;
     }
     public function broadcastOn(): Channel
     {
-        return new PrivateChannel('chat.'.$this->chat->id);
+        return new PrivateChannel('chat.'.$this->channel_id);
     }
     //on pusher it's ".NewMsgSent" with boradcastAs, otherwise App/Events/NewMsgSent 
     public function broadcastAs(): string|null{
@@ -29,6 +32,6 @@ class NewMsgSent implements ShouldBroadcast
     }
     public function broadcastWith(): array
     {
-        return ['id' => $this->chat->id];
+        return ['channel_id' => $this->channel_id, 'content'=>$this->content];
     }
 }

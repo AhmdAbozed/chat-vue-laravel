@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Support\Facades\DB;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -20,5 +21,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        //logs every query and its execution time in ms
+        DB::listen(function ($query) {
+            error_log($query->sql);     
+            error_log($query->time);    
+        });
     }
 }
