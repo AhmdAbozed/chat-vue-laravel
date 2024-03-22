@@ -24,5 +24,36 @@ class DatabaseSeeder extends Seeder
             'email' => 'testuser'.'@gmail.com',
             'password' => bcrypt('testuser'),
         ]);
+        
+        DB::table('users')->insert([
+            'name' => 'testuser2',
+            'email' => 'testuser2'.'@gmail.com',
+            'password' => bcrypt('testuser'),
+        ]);
+        DB::table('channels')->insert(['id' => '1']);
+        
+        DB::table('channels')->insert(['id' => '2']);
+        
+        DB::table('channel_users')->insert([
+            'channel_id' => '1',
+            'user_id' => '1',
+        ]);
+        
+        DB::table('channel_users')->insert([
+            'channel_id' => '1',
+            'user_id' => '2',
+        ]);
+
+        
+        DB::table('channel_users')->insert([
+            'channel_id' => '2',
+            'user_id' => '3',
+        ]);
+        
+        DB::table('channel_users')->insert([
+            'channel_id' => '2',
+            'user_id' => '1',
+        ]);
+        
     }
 }

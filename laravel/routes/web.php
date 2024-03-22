@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Inertia\Inertia;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return view('welcome');
+});
+
+//'as' names route for reference in controllers
+Route::middleware('auth:sanctum')->get('/', ['as'=>'homePage', 'uses'=>function () {
+    return Inertia::render('homePage');
+}]);
+
+Route::get('/login',['as'=>'login', 'uses'=>function () {
+    return Inertia::render('auth/LogIn');
+}]);
+
+Route::get('/signup', function () {
+    return Inertia::render('auth/SignUp');
 });

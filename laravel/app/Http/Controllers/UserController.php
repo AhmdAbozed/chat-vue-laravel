@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Throwable;
 
 class UserController extends Controller
@@ -33,7 +34,7 @@ class UserController extends Controller
         ]);
         return response($User);
     }
-    public function login(Request $request): Response
+    public function login(Request $request)
     {
 
         error_log($request->input("Username"));
@@ -41,7 +42,8 @@ class UserController extends Controller
         //Auth::attempt creates the session needed for auth if successful 
         if (Auth::attempt(['name' => $request->input("Username"), 'password' => $request->input("Password")])) {
             error_log($request->user());
-            return response(200, 200);
+            
+            return to_route('homePage');
         } else {
             return response(json_encode("Invalid Username or Password."), 403);
         }
