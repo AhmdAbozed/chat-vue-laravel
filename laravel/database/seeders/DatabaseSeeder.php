@@ -24,12 +24,17 @@ class DatabaseSeeder extends Seeder
             'email' => 'testuser'.'@gmail.com',
             'password' => bcrypt('testuser'),
         ]);
-        
         DB::table('users')->insert([
             'name' => 'testuser2',
             'email' => 'testuser2'.'@gmail.com',
             'password' => bcrypt('testuser'),
         ]);
+        DB::table('users')->insert([
+            'name' => 'testuser3',
+            'email' => 'testuser3'.'@gmail.com',
+            'password' => bcrypt('testuser'),
+        ]);
+/*
         DB::table('channels')->insert(['id' => '1']);
         
         DB::table('channels')->insert(['id' => '2']);
@@ -54,6 +59,6 @@ class DatabaseSeeder extends Seeder
             'channel_id' => '2',
             'user_id' => '1',
         ]);
-        
+  */      
     }
 }

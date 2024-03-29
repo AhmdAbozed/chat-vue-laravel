@@ -26,7 +26,7 @@ async function submitForm(event: Event) {
 
             body: JSON.stringify(submission)
         }
-        const endpoint = location.protocol+"//"+location.host+"/api/users/signup"
+        const endpoint = location.protocol+"//"+location.host+"/_api/users/signup"
         const res = await fetch(endpoint, options);
         console.log(res.status)
 

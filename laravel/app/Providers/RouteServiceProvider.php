@@ -32,6 +32,12 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
+            
+            //Vercel /api route conflicts with laravel /api, leading to /api/api for laravel api
+            //changing prefix to /_api solves it
+            Route::middleware('api')
+                ->prefix('_api')
+                ->group(base_path('routes/api.php'));
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));

@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 
-const formProcessing = ref(false)
 import { ref } from 'vue';
 import getXsrf from './util/xsrf'
 
+const formProcessing = ref(false)
 const notFoundAlert = ref(false)
+
+
+const emit = defineEmits(['newChatAdded'])
 
 async function createNewChat(event: Event) {
     try {
@@ -26,7 +29,7 @@ async function createNewChat(event: Event) {
 
             body: JSON.stringify(submission)
         }
-        const endpoint = location.protocol+"//"+location.host+"/api/chats";
+        const endpoint = location.protocol+"//"+location.host+"/_api/chats";
         console.log(endpoint)
         const res = await fetch(endpoint, options);
         formProcessing.value = false;
@@ -34,7 +37,8 @@ async function createNewChat(event: Event) {
 
         if (res.status == 200) {
             console.log(res.status)
-
+            emit('newChatAdded', true)
+            return true
         }
         else {
             notFoundAlert.value = true;

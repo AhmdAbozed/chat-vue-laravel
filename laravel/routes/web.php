@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 /*
@@ -20,8 +21,8 @@ Route::get('/welcome', function () {
 });
 
 //'as' names route for reference in controllers
-Route::middleware('auth:sanctum')->get('/', ['as'=>'homePage', 'uses'=>function () {
-    return Inertia::render('homePage');
+Route::middleware('auth:sanctum')->get('/', ['as'=>'homePage', 'uses'=>function (Request $request) {
+    return Inertia::render('homePage', ['signedUserId'=>$request->user()]);
 }]);
 
 Route::get('/login',['as'=>'login', 'uses'=>function () {

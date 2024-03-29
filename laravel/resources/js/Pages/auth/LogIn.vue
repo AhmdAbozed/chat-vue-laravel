@@ -29,7 +29,7 @@ async function submitForm(event: Event) {
 
             body: JSON.stringify(submission)
         }
-        const endpoint = location.protocol+"//"+location.host+"/api/users/login";
+        const endpoint = location.protocol+"//"+location.host+"/_api/users/login";
         const res = await fetch(endpoint, options);
         formProcessing.value = false;
 

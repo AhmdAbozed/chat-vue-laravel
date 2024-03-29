@@ -13,7 +13,7 @@ export const EchoObj = new Echo({
     authorizer: (channel: any, options: any) => {
         return {
             authorize: (socketId: any, callback: any) => {
-                fetch('http://127.0.0.1:8000/broadcasting/auth', {
+                fetch(location.protocol + "//" + location.host + '/broadcasting/auth', {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",

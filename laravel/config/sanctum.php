@@ -16,8 +16,8 @@ return [
     */
 
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,http://127.0.0.1:5173, 127.0.0.1:5173, ::1',
+        '%s%s',env('VERCEL_URL'),
+        'localhost,'.env('VERCEL_URL').',localhost:3000,127.0.0.1,127.0.0.1:8000,http://127.0.0.1:5173, 127.0.0.1:5173, ::1',
         Sanctum::currentApplicationUrlWithPort()
     ))),
 

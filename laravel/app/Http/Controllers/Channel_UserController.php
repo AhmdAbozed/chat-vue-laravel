@@ -68,7 +68,7 @@ class Channel_UserController extends Controller
             //find the other user of the channel, by same method above.
             $receiver=$channel->users->except($request->user()->id)->select('id', 'name');
             error_log("receiver in getUserChats: ".$receiver);
-            array_push($result, (object)['channel_id'=>$channel->id, 'receiver'=>$receiver[0]]);
+            array_push($result, (object)['id'=>$channel->id, 'receiver'=>$receiver[0]]);
         }
         return response($result);
     }
