@@ -1,0 +1,32 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DUbhjcJn.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/Pages/assets/exit.svg": {
+    "file": "assets/exit-WbUrKEmO.svg",
+    "src": "resources/js/Pages/assets/exit.svg"
+  },
+  "resources/js/Pages/assets/menu.svg": {
+    "file": "assets/menu-BhYoNCoL.svg",
+    "src": "resources/js/Pages/assets/menu.svg"
+  },
+  "resources/js/Pages/assets/prof3.svg": {
+    "file": "assets/prof3-BR919QqM.svg",
+    "src": "resources/js/Pages/assets/prof3.svg"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CG4BHL7U.js",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-DUbhjcJn.css"
+    ],
+    "assets": [
+      "assets/prof3-BR919QqM.svg",
+      "assets/exit-WbUrKEmO.svg",
+      "assets/menu-BhYoNCoL.svg"
+    ]
+  }
+}

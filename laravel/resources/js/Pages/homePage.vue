@@ -144,6 +144,9 @@ async function sendMsg(e: Event) {
                     v-for="messageObj in messages" :key="messageObj.id">
                 </chatMsg>
             </div>
+            <div class="bg-gray-800 h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else>
+                <p class="mx-auto mb-5 text-gray-400 text-lg">Select a Conversation To Begin Chatting </p>
+            </div>
             <form class="flex p-2 bg-gray-900" @submit="sendMsg">
 
                 <input type="text"
