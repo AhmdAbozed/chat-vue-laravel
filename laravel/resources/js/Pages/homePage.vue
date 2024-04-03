@@ -9,7 +9,8 @@ type signedInUser = {
 } 
 export type channelObj = {
     id: number,
-    receiver: { name: string }
+    receiver: { name: string },
+    unreadCount: number
 }
 export type msgObj = {
     id: number,
@@ -33,7 +34,7 @@ const showList = ref(true);
 provide('currentChannelInjection', currentChannel)
 
 onMounted(async () => {
-    const chats = await getChats();
+    const chats = await getChannels();
     channelsList.value = chats;
     currentChannel.value = chats[0]
 })
@@ -42,7 +43,7 @@ watch(currentChannel, async (newChannel) => {
         const newMsgs = await getMsgs();
         if (window.innerWidth < 650) showList.value = false;
         messages.value = newMsgs;
-        EchoObj.leaveAllChannels();
+        //EchoObj.private("chat." + newChannel.id).stopListening(".NewMsgSent");
         EchoObj.private("chat." + newChannel.id)
             .listen(".NewMsgSent", async (e: any) => {
                 console.log("caught something?")
@@ -55,7 +56,7 @@ watch(currentChannel, async (newChannel) => {
 
 })
 
-async function getChats() {
+async function getChannels() {
     const options: RequestInit = {
         method: "GET",
         headers: {
@@ -127,7 +128,7 @@ async function sendMsg(e: Event) {
 <template>
     <div class="grid grid-rows-1 sm:flex grid-cols-1 h-svh">
         <chatsList :showList="showList" :channelItemsList="channelsList"
-            @newChatAdded="async () => { console.log('second emit reached'); const chats = await getChats(); channelsList = chats; }"
+            @newChatAdded="async () => { console.log('second emit reached'); const chats = await getChannels(); channelsList = chats; }"
             @setChat="(chat: any) => { console.log(chat); currentChannel = chat; }"
             @setShowList="(newShowList: any) => { console.log('changing showlist: ' + newShowList); showList = newShowList; }">
         </chatsList>

@@ -26,7 +26,7 @@ class Channel extends Model
     ];
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'channel_users');
+        return $this->belongsToMany(User::class, 'channel_users')->withPivot('unread_count');;
     }
     public function messages(): HasMany{
         return $this->hasMany(Message::class);

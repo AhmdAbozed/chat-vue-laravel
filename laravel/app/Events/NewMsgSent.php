@@ -10,21 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
+use App\Models\Message;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class NewMsgSent implements ShouldBroadcast
+class NewMsgSent implements ShouldBroadcastNow
 {
     use Dispatchable;
-    public $channel_id;
-    public $content;
-    public function __construct($id, $message)
+    public Message $message;
+    public function __construct( $message)
     {
-        $this->channel_id= $id;
-        
-        $this->content= $message;
+        $this->message = $message;
     }
     public function broadcastOn(): Channel
     {
-        return new PrivateChannel('chat.'.$this->channel_id);
+        return new PrivateChannel('chat.'.$this->message->channel_id);
     }
     //on pusher it's ".NewMsgSent" with boradcastAs, otherwise App/Events/NewMsgSent 
     public function broadcastAs(): string|null{
@@ -32,6 +31,6 @@ class NewMsgSent implements ShouldBroadcast
     }
     public function broadcastWith(): array
     {
-        return ['channel_id' => $this->channel_id, 'content'=>$this->content];
+        return ['channel_id' => $this->message->channel_id, 'time'=>date("Y-m-d H:i:s", time()), 'sup'=>'whatsgoig on'];
     }
 }

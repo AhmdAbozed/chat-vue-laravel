@@ -20,7 +20,8 @@ class ChannelUser extends Model
      */
     protected $fillable = [
         'user_id',
-        'channel_id'
+        'channel_id',
+        'unread_count'
     ];
 
 }

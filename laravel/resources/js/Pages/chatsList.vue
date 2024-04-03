@@ -22,7 +22,7 @@ const emit = defineEmits(['setChat', 'setShowList', 'newChatAdded'])
         <div class="flex-grow bg-gray-950 bg-opacity-65" v-if="channelItemsList">
             <div class="flex flex-col overflow-y-auto flex-grow">
                 <chatItem v-for="channelObj in props.channelItemsList" :key="channelObj.id"
-                    :userName='channelObj.receiver.name' :channel_id='channelObj.id'
+                    :userName='channelObj.receiver.name' :channelId='channelObj.id' :unreadCount="channelObj.unreadCount"
                     @setChatChild="(chat) => { console.log('emit'); emit('setChat', chat) }"></chatItem>
             </div>
         </div>

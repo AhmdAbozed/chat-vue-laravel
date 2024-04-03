@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Support\Facades\Auth;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -44,9 +44,36 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function login(string $username, string $password)
+    {
+        //Auth::attempt creates the session needed for auth if successful 
+        if(Auth::attempt(['name' => $username, 'password' =>$password])){
+            return 200;
+        }else{
+            abort(response()->json('Invalid Username or Password.', 403));
+        }
+    }
+    
+    public function signUp(string $username, string $password, string $email){
+
+        if (User::where('email', $email)->exists()) {
+            abort(response()->json('Email already in-use.', 403));
+        }
+
+        if (User::where('name', $username)->exists()) {
+            abort(response()->json('Username already in-use.', 403));
+        }
+        
+        $User = User::create([
+            'name' => $username,
+            'password' => $password,
+            'email' => $email
+        ]);
+        return $User;
+    }
     public function Channels(): BelongsToMany
     {
-        return $this->belongsToMany(Channel::class, 'channel_users');
+        return $this->belongsToMany(Channel::class, 'channel_users')->withPivot('unread_count');
     }
     
     public function messages(): HasMany{

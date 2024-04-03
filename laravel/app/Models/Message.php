@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\NewMsgSent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,7 @@ class Message extends Model
         'channel_id',
         'content'
     ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -22,4 +24,10 @@ class Message extends Model
     {
         return $this->belongsTo(Channel::class);
     }
+
+    
+    protected $dispatchesEvents = [
+        //passes $message
+        'created' => NewMsgSent::class
+    ];
 }
