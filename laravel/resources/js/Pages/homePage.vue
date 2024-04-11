@@ -1,28 +1,17 @@
 <script lang="ts" setup>
-import chatMsg from './chatMsg.vue';
-import chatsList from './chatsList.vue'
-import { EchoObj } from './util/echo';
-import { ref,  watch,  onMounted, provide } from 'vue';
-import type {PropType} from 'vue'
+import chatMsg from './components/chatMsg.vue';
+import chatsList from '@/Pages/panels/chatsList.vue'
+import { EchoObj } from '@/Pages/util/echo';
+import { ref, watch, onMounted, provide } from 'vue';
+import type { PropType } from 'vue'
 import { toRaw } from 'vue'
+import type {channelObj, msgObj} from '@/Pages/util/types'
+import detailsPanel from '@/Pages/panels/detailsPanel.vue'
 type signedInUser = {
-} 
-export type channelObj = {
-    id: number,
-    receiver: { name: string },
-    unreadCount: number
-}
-export type msgObj = {
-    id: number,
-    user_id: number,
-    channel_id: number,
-    user: string,
-    content: string,
-    updated_at: string
 }
 //prop from inertia.render at backend
 const props = defineProps({
-    signedUserId: Object as PropType<{id: number, name: string, email: string}>
+    signedUserId: Object as PropType<{ id: number, name: string, email: string }>
 })
 provide('signedInUser', props.signedUserId)
 
@@ -30,12 +19,14 @@ const messages = ref<Array<msgObj>>();
 const currentChannel = ref<channelObj>();
 const channelsList = ref<Array<channelObj>>();
 const showList = ref(true);
+const showDetails = ref(false);
 
 provide('currentChannelInjection', currentChannel)
 
 onMounted(async () => {
     const chats = await getChannels();
     channelsList.value = chats;
+    console.log(chats)
     currentChannel.value = chats[0]
 })
 watch(currentChannel, async (newChannel) => {
@@ -49,7 +40,6 @@ watch(currentChannel, async (newChannel) => {
                 console.log("caught something?")
                 console.log(e);
                 const newMsgs = await getMsgs();
-                console.log(newChannel.receiver)
                 messages.value = newMsgs;
             })
     }
@@ -132,17 +122,26 @@ async function sendMsg(e: Event) {
             @setChat="(chat: any) => { console.log(chat); currentChannel = chat; }"
             @setShowList="(newShowList: any) => { console.log('changing showlist: ' + newShowList); showList = newShowList; }">
         </chatsList>
-        <section class="sm:w-full flex flex-col col-start-1 row-start-1">
+        <section class="text-gray-300 sm:w-full flex flex-col col-start-1 row-start-1">
             <div class="bg-gray-900 p-3 h-14 shadow-gray-800 drop-shadow-lg z-10 flex items-center">
+
                 <button @click="() => { showList = true }" v-if="!showList">
                     <img src="./assets/menu.svg" class="h-8 opacity-90">
                 </button>
+                <div class="flex cursor-pointer" @click="">
+                    <img src="./assets/prof3.svg" class="h-12 my-auto">
+                    <div class="flex flex-col ml-1">
+                        <div class="text-lg translate-y-1">{{ currentChannel?.name }}</div>
+                        <div class="text-sm text-gray-400">Click here for details</div>
+                    </div>
+                </div>
+
 
             </div>
             <div class="bg-gray-800 h-full items-start flex flex-col-reverse flex-nowrap overflow-auto"
                 v-if="currentChannel">
-                <chatMsg :msgObj="messageObj" :receiverName="currentChannel.receiver.name"
-                    v-for="messageObj in messages" :key="messageObj.id">
+                <chatMsg :msgObj="messageObj" :receiverName="currentChannel.name" v-for="messageObj in messages"
+                    :key="messageObj.id">
                 </chatMsg>
             </div>
             <div class="bg-gray-800 h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else>
@@ -156,5 +155,6 @@ async function sendMsg(e: Event) {
                 <input type="submit" value="Submit" class="ml-1 text-gray-400">
             </form>
         </section>
+        <detailsPanel :channelItemObj="currentChannel" v-if="currentChannel"/>
     </div>
 </template>

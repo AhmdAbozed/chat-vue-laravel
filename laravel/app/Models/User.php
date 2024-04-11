@@ -79,4 +79,8 @@ class User extends Authenticatable
     public function messages(): HasMany{
         return $this->hasMany(Message::class);
     }
+
+    public function requests(): HasMany{
+        return $this->hasMany(JoinRequest::class);
+    }
 }

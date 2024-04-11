@@ -64,12 +64,17 @@
       "forceConsistentCasingInFileNames": true,
       // See <https://github.com/vuejs/vue-cli/pull/5688>
       "skipLibCheck": true,
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["resources/js/*"],
+      }
     },
     "include": [ 
         "resources/**/*.ts",
         "resources/**/*.d.ts",
         "resources/**/*.vue",
         "empty.ts"
-      ] 
+      ],
+    
   }
   

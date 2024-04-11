@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('testuser'),
         ]);
 
-        DB::table('channels')->insert(['id' => '1']);
+        DB::table('channels')->insert(['type'=>'private']);
         
 
 
@@ -51,16 +51,22 @@ class DatabaseSeeder extends Seeder
         ]);
 
         
-        DB::table('channels')->insert(['id' => '2']);
-        
-        DB::table('channel_users')->insert([
-            'channel_id' => '2',
-            'user_id' => '3',
-        ]);
+        DB::table('channels')->insert(['type'=>'group', 'owner_id'=>'1', 'name'=>'testgroup']);
         
         DB::table('channel_users')->insert([
             'channel_id' => '2',
             'user_id' => '1',
+        ]);
+        
+        DB::table('channel_users')->insert([
+            'channel_id' => '2',
+            'user_id' => '2',
+        ]);
+        
+        DB::table('join_requests')->insert([
+            'channel_id' => '2',
+            'user_id' => '3',
+            'status' => 'pending'
         ]);
     }
 }
