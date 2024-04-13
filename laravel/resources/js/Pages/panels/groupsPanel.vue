@@ -25,7 +25,8 @@ async function createJoinRequest(event: Event) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Credentials': 'true',
                 //without decoding, %3D in token isn't converted to =, which causes token mismatch
-                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!)
+                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+                'Accept':'application/json'
             },
             credentials: "include",
 
@@ -71,7 +72,8 @@ async function createNewGroup(event: Event) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Credentials': 'true',
                 //without decoding, %3D in token isn't converted to =, which causes token mismatch
-                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!)
+                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+                'Accept':'application/json'
             },
             credentials: "include",
 

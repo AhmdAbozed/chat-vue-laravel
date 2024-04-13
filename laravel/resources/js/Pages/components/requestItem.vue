@@ -21,13 +21,14 @@ async function resolveRequest(accept: boolean) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Credentials': 'true',
                 //without decoding, %3D in token isn't converted to =, which causes token mismatch
-                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!)
+                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+                'Accept':'application/json'
             },
             credentials: "include",
 
             body: JSON.stringify({accepted: accept})
         }
-        const endpoint = location.protocol+"//"+location.host+"/_api/chats/"+props.requestItemObj?.channel_id+"/requests/"+props.requestItemObj?.id;
+        const endpoint = location.protocol+"//"+location.host+"/_api/requests/"+props.requestItemObj?.id;
         console.log(endpoint)
         const res = await fetch(endpoint, options);
         processing.value = false;

@@ -26,17 +26,21 @@ class ChannelService
 
     private function channelExists(int $user_id, int $receiverId): Collection
     {
-        //Do they already share a channel?
-        $senderChannels = $this->user->query()->find($user_id)->channels;
-        $receiverChannels = $this->user->query()->find($receiverId)->channels;
+        //Do they already share a private channel?
+        $senderChannels = $this->user->query()->find($user_id)->channels->filter(function($channel){
+            return $channel->type !== 'group';
+            //values() reverts array indexing from filter
+        })->values();
+        $receiverChannels = $this->user->query()->find($receiverId)->channels->filter(function($channel){
+            return $channel->type !== 'group';
+        })->values();
         //intersect compares ids
         return $senderChannels->intersect($receiverChannels);
     }
 
     public function createPrivateChannel(int $user_id, string $receiverName): Channel
     {
-
-        //firstOrFail() throws exception if not found and a 404 res is automatically sent
+        // a 404 res is automatically sent on fail
         $receiverUser = User::query()->where('name', $receiverName)->firstOrFail();
         $existingChannel = $this->channelExists($user_id, $receiverUser->id);
         if ($existingChannel->isEmpty()) {
@@ -54,12 +58,11 @@ class ChannelService
 
     public function createGroupChannel(User $user, string $channelName): Channel
     {
-        //firstOrFail() throws exception if not found and a 404 res is automatically sent
         $existingChannel = $this->channel->query()->where('name', $channelName)->first();
         error_log('existing channel: ' . json_encode($existingChannel));
         if (!$existingChannel) {
             $channel = $this->channel->query()->create(['name' => $channelName, 'type' => 'group']);
-            $senderChannelUser = $channel->users()->attach($user->id);
+            $channel->users()->attach($user->id);
             $channel->owner()->associate($user);
             $channel->save();
             error_log("group channel Created: " . $channel->id);

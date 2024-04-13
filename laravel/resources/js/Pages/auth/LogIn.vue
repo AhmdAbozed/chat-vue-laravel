@@ -23,7 +23,8 @@ async function submitForm(event: Event) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Credentials': 'true',
                 //without decoding, %3D in token isn't converted to =, which causes token mismatch
-                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!)
+                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+                'Accept':'application/json'
             },
             credentials: "include",
 
@@ -39,7 +40,7 @@ async function submitForm(event: Event) {
         }
         else {
 
-            errorMsg.value=(await res.json())!
+            errorMsg.value=(await res.json()).errorMsg!
             return false
         }
         
@@ -100,7 +101,7 @@ async function submitForm(event: Event) {
                             :disabled="formProcessing">Sign
                             in</button>
 
-                        <div class="flex justify-center text-sm text-red-500">
+                        <div class="flex justify-center text-sm text-red-500" >
                             {{ errorMsg }}
                         </div>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">

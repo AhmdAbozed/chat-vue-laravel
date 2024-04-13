@@ -24,12 +24,14 @@ class JoinRequestService
         $this->channelUser = $channelUser;
     }
 
-    public function getGroupRequests(int $channel_id): array
+    public function getGroupRequests(int $owner_id, int $channel_id): array
     {
         //without 'with', channels are retrieved separately (lazy loading). With 'with', they're retrieved in one query 
         $channel = $this->channel::with('requests')->findOrFail($channel_id);
         $result = [];
-
+        if(!($owner_id == $channel->owner->id))abort(response()->json('Unauthorized', 403));
+    
+        
         foreach ($channel->requests as $request) {
             if ($request->status == 'pending') {
                 $user = $request->user;
@@ -48,11 +50,9 @@ class JoinRequestService
 
     public function resolveJoinRequest(int $owner_id, int $request_id, bool $accepted)
     {
-        error_log('req id: ' . $request_id);
         $joinRequest = $this->joinRequest->query()->find($request_id);
         $channelToJoin = $joinRequest->channel;
-        error_log("resolving: " . ($joinRequest->status == 'pending' && $channelToJoin->owner->id == $owner_id));
-
+    
         if ($joinRequest->status == 'pending' && $channelToJoin->owner->id == $owner_id) {
             if ($accepted) {
                 $newChannelUser = $channelToJoin->users()->attach($joinRequest->user->id);

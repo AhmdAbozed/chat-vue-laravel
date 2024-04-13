@@ -50,7 +50,7 @@ class User extends Authenticatable
         if(Auth::attempt(['name' => $username, 'password' =>$password])){
             return 200;
         }else{
-            abort(response()->json('Invalid Username or Password.', 403));
+            abort(response()->json(['errorMsg' => 'Invalid Username or Password.'], 403));
         }
     }
     

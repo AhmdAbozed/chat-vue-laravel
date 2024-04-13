@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Messages\MessagePostRequest;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -9,7 +10,7 @@ use App\Services\MessageService;
 
 class MessageController extends Controller
 {
-    public function postMessage(Request $request): Response
+    public function postMessage(MessagePostRequest $request): Response
     {
         $message = Message::query()->create([
             'user_id' => $request->user()->id,

@@ -19,7 +19,8 @@ async function submitForm(event: Event) {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Credentials': 'true',
-                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!)
+                'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+                'Accept':'application/json'
 
             },
             credentials: "include",
