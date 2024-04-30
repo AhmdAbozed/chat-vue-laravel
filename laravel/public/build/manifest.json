@@ -1,32 +1,62 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-DhqLd_Ke.css",
+    "file": "assets/app-lIWF_0aR.css",
     "src": "resources/css/app.css",
     "isEntry": true
+  },
+  "resources/js/Pages/assets/add3.svg": {
+    "file": "assets/add3-OwwdbNzr.svg",
+    "src": "resources/js/Pages/assets/add3.svg"
+  },
+  "resources/js/Pages/assets/check5.svg": {
+    "file": "assets/check5-CURpCt80.svg",
+    "src": "resources/js/Pages/assets/check5.svg"
   },
   "resources/js/Pages/assets/exit.svg": {
     "file": "assets/exit-WbUrKEmO.svg",
     "src": "resources/js/Pages/assets/exit.svg"
   },
+  "resources/js/Pages/assets/file.svg": {
+    "file": "assets/file-CE2OSsf6.svg",
+    "src": "resources/js/Pages/assets/file.svg"
+  },
+  "resources/js/Pages/assets/group2.svg": {
+    "file": "assets/group2-DccFDNWO.svg",
+    "src": "resources/js/Pages/assets/group2.svg"
+  },
   "resources/js/Pages/assets/menu.svg": {
     "file": "assets/menu-BhYoNCoL.svg",
     "src": "resources/js/Pages/assets/menu.svg"
+  },
+  "resources/js/Pages/assets/plus5.svg": {
+    "file": "assets/plus5-Cqvav8x6.svg",
+    "src": "resources/js/Pages/assets/plus5.svg"
   },
   "resources/js/Pages/assets/prof3.svg": {
     "file": "assets/prof3-BR919QqM.svg",
     "src": "resources/js/Pages/assets/prof3.svg"
   },
+  "resources/js/Pages/assets/reject.svg": {
+    "file": "assets/reject-ClYB9--H.svg",
+    "src": "resources/js/Pages/assets/reject.svg"
+  },
   "resources/js/app.js": {
-    "file": "assets/app-CU2TYHUD.js",
+    "file": "assets/app-CdXPcGSp.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-DhqLd_Ke.css"
+      "assets/app-lIWF_0aR.css"
     ],
     "assets": [
       "assets/prof3-BR919QqM.svg",
+      "assets/file-CE2OSsf6.svg",
+      "assets/check5-CURpCt80.svg",
+      "assets/reject-ClYB9--H.svg",
+      "assets/menu-BhYoNCoL.svg",
       "assets/exit-WbUrKEmO.svg",
-      "assets/menu-BhYoNCoL.svg"
+      "assets/plus5-Cqvav8x6.svg",
+      "assets/group2-DccFDNWO.svg",
+      "assets/add3-OwwdbNzr.svg"
     ]
   }
 }

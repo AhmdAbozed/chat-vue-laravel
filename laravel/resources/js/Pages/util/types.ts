@@ -11,7 +11,10 @@ export type msgObj = {
     channel_id: number,
     user: string,
     content: string,
-    updated_at: string
+    updated_at: string,
+    file_name: string|null,
+    file_type: string|null,
+    file_size: number|null
 }
 
 export type requestObj = {
@@ -20,4 +23,10 @@ export type requestObj = {
     channel_id: number,
     name: string,
     status: 'pending' | 'rejected' | 'accepted'
+}
+
+export type fileHeaderData = {
+    fileToken: string,
+    fileBucket?:string,
+    fileUrl: string 
 }

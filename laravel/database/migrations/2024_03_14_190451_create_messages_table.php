@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('channel_id');
             $table->foreign('channel_id')->references('id')->on('channels');
             $table->text('content');
+            $table->text('file_name')->nullable();
+            $table->unsignedBigInteger('file_size')->nullable();
             $table->timestamps();
         });
     }

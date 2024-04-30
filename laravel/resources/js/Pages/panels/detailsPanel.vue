@@ -3,25 +3,26 @@ import { ref, watch, onMounted } from 'vue';
 import type { PropType } from 'vue';
 import getXsrf from '../util/xsrf';
 import memberItem from '../components/memberItem.vue';
-import type {channelObj, requestObj} from '@/Pages/util/types'
+import type { channelObj, requestObj } from '@/Pages/util/types'
 import RequestItem from '../components/requestItem.vue';
 const props = defineProps({
     showList: Boolean,
     channelItemObj: Object as PropType<channelObj>
 })
-const emit = defineEmits(['setChat', 'setShowList', 'newChatAdded']);
+const emit = defineEmits(['setShowDetails']);
 const displayRequests = ref(false);
 const members = ref();
 const requests = ref<Array<requestObj>>();
 
-async function fetchDetails(){
+async function fetchDetails() {
     members.value = [];
     requests.value = [];
     const fetchedMembers = await getGroupMembers(props.channelItemObj!.id);
-    const fetchedRequests = await getGroupRequests(props.channelItemObj!.id);
-    console.log("fetched requests", fetchedRequests);
+    if (props.channelItemObj?.type == 'group') {
+        const fetchedRequests = await getGroupRequests(props.channelItemObj!.id);
+        requests.value = fetchedRequests;
+    }
     members.value = fetchedMembers;
-    requests.value = fetchedRequests;
 
 }
 onMounted(fetchDetails)
@@ -74,10 +75,10 @@ async function getGroupRequests($channel_id: number) {
 </script>
 <template>
     <section
-        class="col-start-1 row-start-1 min-w-56 bg-gray-950 h-full text-gray-200 text-lg flex flex-col z-50 m-auto">
+        class="col-start-1 row-start-1  min-w-56 bg-gray-950 h-full text-gray-200 text-lg flex flex-col z-50">
         <div class="bg-gray-900  p-3 min-h-14 shadow-gray-800 drop-shadow-lg z-30 flex">Details
 
-            <button class="ml-auto mr-1" @click="emit('setShowList', false)">
+            <button class="ml-auto mr-1" @click="emit('setShowDetails', false)">
 
                 <img src="../assets/exit.svg" class="h-8 my-auto">
             </button>

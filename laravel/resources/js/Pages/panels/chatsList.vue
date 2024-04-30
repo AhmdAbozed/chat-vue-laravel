@@ -9,28 +9,28 @@ const props = defineProps({
     showList: Boolean
 })
 const emit = defineEmits(['setChat', 'setShowList', 'newChatAdded'])
-const displayRequests = ref(false);
+const displayGroup = ref(false);
 </script>
 <template>
-    <section class="sm:w-96 col-start-1 row-start-1 bg-gray-800 text-gray-200 text-lg flex flex-col z-20"
+    <section class="sm:w-96 sm:max-w-[25vw] col-start-1 row-start-1 bg-gray-800 text-gray-200 text-lg flex flex-col z-20 "
         v-if="props.showList">
         <div class="bg-gray-900  p-3 min-h-14 shadow-gray-800 drop-shadow-lg z-30 flex">Chats
 
-            <button class="ml-auto" @click="displayRequests = !displayRequests">
+            <button class="ml-auto" @click="displayGroup = !displayGroup">
 
                 <img src="../assets/group2.svg" class="h-6 my-auto">
             </button>
-            <button class="ml-3" @click="emit('setShowList', false)">
+            <button class="ml-3" @click="displayGroup=false; emit('setShowList', false)">
 
                 <img src="../assets/exit.svg" class="h-8 my-auto">
             </button>
         </div>
         <div class="flex-grow flex flex-col relative">
-            <div class="flex-grow flex flex-col bg-gray-900 absolute animate-slideIn h-full z-10 overflow-hidden" v-if="displayRequests">
+            <div class="flex-grow flex flex-col bg-gray-900 absolute animate-slideIn h-full z-10 overflow-hidden" v-if="displayGroup">
                 <groupsPanel></groupsPanel>
             </div>
-            <div class=" flex-grow bg-gray-925" v-if="channelItemsList">
-                <div class="flex flex-col overflow-y-auto flex-grow">
+            <div class=" flex-grow bg-gray-925 " v-if="channelItemsList">
+                <div class="flex flex-col overflow-y-auto flex-grow ">
                     <chatItem v-for="channelObj in props.channelItemsList" :key="channelObj.id"
                         :channelItemObj="channelObj"
                         @setChatChild="(chat) => { console.log('emit'); emit('setChat', chat) }"></chatItem>

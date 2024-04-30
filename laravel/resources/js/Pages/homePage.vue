@@ -4,10 +4,13 @@ import chatsList from '@/Pages/panels/chatsList.vue'
 import { EchoObj } from '@/Pages/util/echo';
 import { ref, watch, onMounted, provide } from 'vue';
 import type { PropType } from 'vue'
-import { toRaw } from 'vue'
-import type {channelObj, msgObj} from '@/Pages/util/types'
+import type { channelObj, msgObj, fileHeaderData } from '@/Pages/util/types'
+import { getChannels, getMsgs } from '@/Pages/util/homeService'
 import detailsPanel from '@/Pages/panels/detailsPanel.vue'
-type signedInUser = {
+
+type messagesStateType = {
+    file: fileHeaderData,
+    messagesArr: Array<msgObj>
 }
 //prop from inertia.render at backend
 const props = defineProps({
@@ -15,7 +18,9 @@ const props = defineProps({
 })
 provide('signedInUser', props.signedUserId)
 
-const messages = ref<Array<msgObj>>();
+const messages = ref<messagesStateType>();
+const uploadedFile = ref<File | null>(null);
+const uploadedImgUrl = ref();
 const currentChannel = ref<channelObj>();
 const channelsList = ref<Array<channelObj>>();
 const showList = ref(true);
@@ -24,69 +29,32 @@ const showDetails = ref(false);
 provide('currentChannelInjection', currentChannel)
 
 onMounted(async () => {
-    const chats = await getChannels();
-    channelsList.value = chats;
-    console.log(chats)
-    currentChannel.value = chats[0]
+    const channels = await getChannels();
+    channelsList.value = channels;
+    currentChannel.value = channels[0]
+
 })
 watch(currentChannel, async (newChannel) => {
     if (newChannel) {
-        const newMsgs = await getMsgs();
+        const newMsgs = await getMsgs(newChannel, true);
         if (window.innerWidth < 650) showList.value = false;
-        messages.value = newMsgs;
-        //EchoObj.private("chat." + newChannel.id).stopListening(".NewMsgSent");
+       messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } }
         EchoObj.private("chat." + newChannel.id)
             .listen(".NewMsgSent", async (e: any) => {
                 console.log("caught something?")
                 console.log(e);
-                const newMsgs = await getMsgs();
-                messages.value = newMsgs;
-            })
+                const newMsgs = await getMsgs(currentChannel.value!, false);
+                messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } };
+        })
     }
 
 })
-
-async function getChannels() {
-    const options: RequestInit = {
-        method: "GET",
-        headers: {
-            "Accept": "application/json",
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Credentials': 'true',
-        },
-        credentials: "include",
+function filesOnChange(event: Event) {
+    const file = (event.target as HTMLInputElement).files!
+    if (file[0]) {
+        if (file[0].type.match('^image/')) uploadedImgUrl.value = (URL.createObjectURL(file[0]))
+        uploadedFile.value = file![0];
     }
-    const endpoint = location.protocol + "//" + location.host + "/_api/chats/";
-    console.log(endpoint)
-    const res = await fetch(endpoint, options);
-    if (res.status === 200) {
-        const toJson = await res.json();
-        console.log(toJson)
-        return toJson
-    }
-    else return;
-}
-async function getMsgs() {
-    console.log("currentChannel is: ", currentChannel.value)
-    if (currentChannel.value) {
-        const options: RequestInit = {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Credentials': 'true',
-                'Accept':'application/json'
-            },
-            credentials: "include",
-        }
-        const endpoint = location.protocol + "//" + location.host + "/_api/chats/" + currentChannel!.value!.id + "/messages";
-        console.log(endpoint)
-        const res = await fetch(endpoint, options);
-        if (res.status === 200) {
-            const toJson = await res.json();
-            return toJson
-        }
-    }
-
 }
 async function sendMsg(e: Event) {
     e.preventDefault();
@@ -94,18 +62,19 @@ async function sendMsg(e: Event) {
         return
     }
     const target = e.target as any
-    const submission = { channel_id: currentChannel.value.id, content: target.elements.message.value }
+    const submission = new FormData();
+    submission.append('message', target.elements.message.value)
+    if (uploadedFile.value) { submission.append('file', uploadedFile.value as Blob);uploadedFile.value = null  }
     const options: RequestInit = {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json',
             'Access-Control-Allow-Credentials': 'true',
             //without decoding, %3D in token isn't converted to =, which causes token mismatch
-            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),        
-            'Accept':'application/json'
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+            'Accept': 'multipart/form-data'
         },
         credentials: "include",
-        body: JSON.stringify(submission)
+        body: submission
     };
 
     (e.target! as HTMLFormElement).reset();
@@ -116,47 +85,79 @@ async function sendMsg(e: Event) {
         console.log(json);
     }
 }
+function getFileSize(file: File) {
+    if (file.size > 100000) return (file.size / (1024 * 1024)).toFixed(2) + "MB";
+    else return (file.size / 1024).toFixed(2) + "KB";
+}
 </script>
 <template>
     <div class="grid grid-rows-1 sm:flex grid-cols-1 h-svh">
+
         <chatsList :showList="showList" :channelItemsList="channelsList"
-            @newChatAdded="async () => { console.log('second emit reached'); const chats = await getChannels(); channelsList = chats; }"
-            @setChat="(chat: any) => { console.log(chat); currentChannel = chat; }"
+            @newChatAdded="async () => { console.log('second emit'); const chats = await getChannels(); channelsList = chats; }"
+            @setChat="(chat: channelObj) => { if (chat.name != currentChannel?.name) currentChannel = chat; }"
             @setShowList="(newShowList: any) => { console.log('changing showlist: ' + newShowList); showList = newShowList; }">
         </chatsList>
-        <section class="text-gray-300 sm:w-full flex flex-col col-start-1 row-start-1">
-            <div class="bg-gray-900 p-3 h-14 shadow-gray-800 drop-shadow-lg z-10 flex items-center">
 
+        <section class="bg-gray-800 text-gray-300 flex flex-col col-start-1 row-start-1 min-w-0 flex-grow">
+
+            <section class="bg-gray-900 p-3 h-14 shadow-gray-800 drop-shadow-lg z-10 flex items-center">
                 <button @click="() => { showList = true }" v-if="!showList">
                     <img src="./assets/menu.svg" class="h-8 opacity-90">
                 </button>
-                <div class="flex cursor-pointer" @click="">
+                <div class="flex cursor-pointer"  @click="()=>{showDetails = true}">
                     <img src="./assets/prof3.svg" class="h-12 my-auto">
                     <div class="flex flex-col ml-1">
                         <div class="text-lg translate-y-1">{{ currentChannel?.name }}</div>
                         <div class="text-sm text-gray-400">Click here for details</div>
                     </div>
                 </div>
+            </section>
 
-
-            </div>
-            <div class="bg-gray-800 h-full items-start flex flex-col-reverse flex-nowrap overflow-auto"
-                v-if="currentChannel">
-                <chatMsg :msgObj="messageObj" :receiverName="currentChannel.name" v-for="messageObj in messages"
-                    :key="messageObj.id">
+            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto"
+                v-if="currentChannel && messages">
+                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="messages?.file"
+                    v-for="messageObj in messages!.messagesArr" :key="messageObj.id">
                 </chatMsg>
-            </div>
-            <div class="bg-gray-800 h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else>
+            </section>
+
+            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else>
                 <p class="mx-auto mb-5 text-gray-400 text-lg">Select a Conversation To Begin Chatting </p>
-            </div>
-            <form class="flex p-2 bg-gray-900" @submit="sendMsg">
+            </section>
+
+            <section class="  bg-gray-925 items-start flex" v-if="uploadedFile">
+
+                <img :src="uploadedImgUrl" class="h-8 my-auto" v-if="uploadedFile.type.match('^image/')">
+                <img src="./assets/file.svg" class="h-8 my-auto" v-else>
+                <div class="flex flex-col">
+                    <p class="text-gray-300 ">{{ uploadedFile?.name }} </p>
+                    <p class="text-gray-400 ">{{ getFileSize(uploadedFile!) }} </p>
+
+                </div>
+                <button class="ml-auto" @click="() => { uploadedFile = null }">
+                    <img src="./assets/exit.svg" class="h-8 ml-auto">
+                </button>
+
+            </section>
+            <form class="flex p-2 bg-gray-900" @submit="(e) => { sendMsg(e) }">
+
+                <label htmlFor="img-upload" class="cursor-pointer">
+                    <img src="./assets/plus5.svg" class="h-8" alt="">
+                    <input type="file" id="img-upload" className="input-button" name="img" @change="filesOnChange"
+                        hidden>
+                    </input>
+                </label>
 
                 <input type="text"
                     class="pl-3 text-gray-300 h-8 flex-grow bg-gray-700 border-2 border-gray-800 rounded-full"
-                    name="message">
+                    name="message" placeholder="Enter Message..">
                 <input type="submit" value="Submit" class="ml-1 text-gray-400">
+
             </form>
+
         </section>
-        <detailsPanel :channelItemObj="currentChannel" v-if="currentChannel"/>
+        <detailsPanel
+            @setShowDetails="() => {showDetails = false; }"
+            :channelItemObj="currentChannel" v-if="currentChannel && showDetails" />
     </div>
 </template>

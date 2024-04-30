@@ -40,10 +40,9 @@ watch(activeChannel, () => {
         <div :class="`${activeStatus ? 'bg-gray-600' : 'bg-gray-700'} w-full min-h-16 mb-4 shadow-md flex`"
             @click="() => { emit('setChatChild', { id: props.channelItemObj!.id, name: props.channelItemObj!.name, type: props.channelItemObj!.type} as channelObj) }">
             <img src="../assets/prof3.svg" class="h-12 my-auto">
-            <div class="flex flex-col my-auto translate-y-0.5 ml-1">
+            <div class="flex flex-col my-auto translate-y-0.5 ml-1 overflow-x-hidden overflow-ellipsis">
                 <div class="text-gray-100">{{ props.channelItemObj!.name }}</div>
             </div>
-
             <div class="text-white rounded-full w-7 h-7 bg-gray-400 ml-auto my-auto mr-2 flex justify-center" v-if="unreadCount">{{ unreadCount }}</div>
         </div>
     </div>

@@ -13,7 +13,10 @@ class Message extends Model
     protected $fillable = [
         'user_id',
         'channel_id',
-        'content'
+        'content',
+        'file_name',
+        'file_size',
+        'file_type'
     ];
 
     public function user(): BelongsTo
@@ -31,3 +34,4 @@ class Message extends Model
         'created' => NewMsgSent::class
     ];
 }
+    
