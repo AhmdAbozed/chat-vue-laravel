@@ -22,5 +22,6 @@ const unreadCount = ref(props.channelItemObj!.unreadCount)
 
             <div class="text-white rounded-full w-7 h-7 bg-gray-400 ml-auto my-auto mr-2 flex justify-center" v-if="unreadCount">{{ unreadCount }}</div>
         </div>
+      
     </div>
 </template>

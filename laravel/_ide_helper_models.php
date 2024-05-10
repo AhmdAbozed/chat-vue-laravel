@@ -97,6 +97,8 @@ namespace App\Models{
  * @property int $user_id
  * @property int $channel_id
  * @property string $content
+ * @property string|null $file_name
+ * @property int|null $file_size
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Channel $channel
@@ -107,6 +109,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereChannelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Message whereFileName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Message whereFileSize($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereUserId($value)
@@ -123,6 +127,7 @@ namespace App\Models{
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property mixed $password
+ * @property bool $upgraded
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -132,6 +137,8 @@ namespace App\Models{
  * @property-read int|null $messages_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Channel> $owned_channels
+ * @property-read int|null $owned_channels_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JoinRequest> $requests
  * @property-read int|null $requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
@@ -148,6 +155,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUpgraded($value)
  */
 	class User extends \Eloquent {}
 }

@@ -22,7 +22,11 @@ Route::get('/welcome', function () {
 
 //'as' names route for reference in controllers
 Route::middleware('auth:sanctum')->get('/', ['as'=>'homePage', 'uses'=>function (Request $request) {
+    
     return Inertia::render('homePage', ['signedUserId'=>$request->user()]);
+}]);
+Route::middleware('auth:sanctum')->get('/upgrade', ['as'=>'subscriptionPage', 'uses'=>function (Request $request) {
+    return Inertia::render('subscriptionPage', ['signedUserId'=>$request->user()]);
 }]);
 
 Route::get('/login',['as'=>'login', 'uses'=>function () {

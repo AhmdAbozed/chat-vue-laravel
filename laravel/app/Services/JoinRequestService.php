@@ -29,9 +29,9 @@ class JoinRequestService
         //without 'with', channels are retrieved separately (lazy loading). With 'with', they're retrieved in one query 
         $channel = $this->channel::with('requests')->findOrFail($channel_id);
         $result = [];
-        if(!($owner_id == $channel->owner->id))abort(response()->json('Unauthorized', 403));
-    
-        
+        if (!($owner_id == $channel->owner->id)) abort(response()->json('Unauthorized', 403));
+
+
         foreach ($channel->requests as $request) {
             if ($request->status == 'pending') {
                 $user = $request->user;
@@ -50,10 +50,21 @@ class JoinRequestService
 
     public function resolveJoinRequest(int $owner_id, int $request_id, bool $accepted)
     {
+
+
         $joinRequest = $this->joinRequest->query()->find($request_id);
         $channelToJoin = $joinRequest->channel;
-    
+
         if ($joinRequest->status == 'pending' && $channelToJoin->owner->id == $owner_id) {
+            if (!$channelToJoin->owner->upgraded) {
+
+                error_log('NOT UPGRADED'.count($channelToJoin->users));
+                if (count($channelToJoin->users) > 1) {
+
+                    error_log('DENIED');
+                    abort(response('Members limit exceeded (10), upgrade to add more.', 403));
+                }
+            }
             if ($accepted) {
                 $newChannelUser = $channelToJoin->users()->attach($joinRequest->user->id);
                 $joinRequest->status = 'accepted';

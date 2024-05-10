@@ -34,18 +34,25 @@ onMounted(async () => {
     currentChannel.value = channels[0]
 
 })
+
+let abortGetMessages: AbortController; 
 watch(currentChannel, async (newChannel) => {
     if (newChannel) {
-        const newMsgs = await getMsgs(newChannel, true);
+        if(abortGetMessages){
+            abortGetMessages.abort();
+        }
+        abortGetMessages = new AbortController();
+        const newMsgs = await getMsgs(newChannel, true, abortGetMessages.signal);
         if (window.innerWidth < 650) showList.value = false;
-       messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } }
+        messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } }
+        EchoObj.private("chat." + newChannel.id).stopListening(".NewMsgSent");
         EchoObj.private("chat." + newChannel.id)
             .listen(".NewMsgSent", async (e: any) => {
                 console.log("caught something?")
                 console.log(e);
-                const newMsgs = await getMsgs(currentChannel.value!, false);
+                const newMsgs = await getMsgs(currentChannel.value!, false, abortGetMessages.signal);
                 messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } };
-        })
+            })
     }
 
 })
@@ -64,7 +71,7 @@ async function sendMsg(e: Event) {
     const target = e.target as any
     const submission = new FormData();
     submission.append('message', target.elements.message.value)
-    if (uploadedFile.value) { submission.append('file', uploadedFile.value as Blob);uploadedFile.value = null  }
+    if (uploadedFile.value) { submission.append('file', uploadedFile.value as Blob); uploadedFile.value = null }
     const options: RequestInit = {
         method: "POST",
         headers: {
@@ -82,7 +89,7 @@ async function sendMsg(e: Event) {
     const res = await fetch(endpoint, options);
     const json = await res.json()
     if (res.status === 200) {
-        console.log(json);
+        console.log('message sent',json);
     }
 }
 function getFileSize(file: File) {
@@ -105,7 +112,7 @@ function getFileSize(file: File) {
                 <button @click="() => { showList = true }" v-if="!showList">
                     <img src="./assets/menu.svg" class="h-8 opacity-90">
                 </button>
-                <div class="flex cursor-pointer"  @click="()=>{showDetails = true}">
+                <div class="flex cursor-pointer" @click="() => { showDetails = true }">
                     <img src="./assets/prof3.svg" class="h-12 my-auto">
                     <div class="flex flex-col ml-1">
                         <div class="text-lg translate-y-1">{{ currentChannel?.name }}</div>
@@ -156,8 +163,7 @@ function getFileSize(file: File) {
             </form>
 
         </section>
-        <detailsPanel
-            @setShowDetails="() => {showDetails = false; }"
-            :channelItemObj="currentChannel" v-if="currentChannel && showDetails" />
+        <detailsPanel @setShowDetails="() => { showDetails = false; }" :channelItemObj="currentChannel"
+            v-if="currentChannel && showDetails" />
     </div>
 </template>

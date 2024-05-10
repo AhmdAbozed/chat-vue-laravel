@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\JoinRequestController;
 use App\Http\Controllers\MessageController;
-
+use App\Http\Controllers\CheckoutController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,3 +35,5 @@ Route::middleware('auth:sanctum')->post('/requests', [JoinRequestController::cla
 
 Route::post('/users/signup', [UserController::class, 'signup']);
 Route::post('/users/login', [UserController::class, 'login']);
+
+Route::get('/webhooks/new_subscription', [CheckoutController::class, 'HandleSubsriptionWebhook']);

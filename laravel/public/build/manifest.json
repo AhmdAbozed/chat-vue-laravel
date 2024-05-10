@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-lIWF_0aR.css",
+    "file": "assets/app-rPnNVsZC.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -11,6 +11,10 @@
   "resources/js/Pages/assets/check5.svg": {
     "file": "assets/check5-CURpCt80.svg",
     "src": "resources/js/Pages/assets/check5.svg"
+  },
+  "resources/js/Pages/assets/d6.svg": {
+    "file": "assets/d6-DnbIE6iw.svg",
+    "src": "resources/js/Pages/assets/d6.svg"
   },
   "resources/js/Pages/assets/exit.svg": {
     "file": "assets/exit-WbUrKEmO.svg",
@@ -41,15 +45,16 @@
     "src": "resources/js/Pages/assets/reject.svg"
   },
   "resources/js/app.js": {
-    "file": "assets/app-CdXPcGSp.js",
+    "file": "assets/app-B6eruCKl.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-lIWF_0aR.css"
+      "assets/app-rPnNVsZC.css"
     ],
     "assets": [
       "assets/prof3-BR919QqM.svg",
       "assets/file-CE2OSsf6.svg",
+      "assets/d6-DnbIE6iw.svg",
       "assets/check5-CURpCt80.svg",
       "assets/reject-ClYB9--H.svg",
       "assets/menu-BhYoNCoL.svg",

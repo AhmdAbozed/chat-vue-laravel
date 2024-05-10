@@ -14,7 +14,7 @@ class JoinRequestController extends Controller
     {
         return response($requestService->createJoinRequest($request->user()->id, $request->input('channelName')));
     }
-    public function resolveJoinRequest(JoinResolveRequest $request, JoinRequestService $requestService, int $channel_id, int $request_id): Response
+    public function resolveJoinRequest(JoinResolveRequest $request, JoinRequestService $requestService, int $request_id): Response
     {
         return response($requestService->resolveJoinRequest($request->user()->id, $request_id, $request->input('accepted')));
     }

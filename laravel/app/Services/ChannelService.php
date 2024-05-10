@@ -58,6 +58,11 @@ class ChannelService
 
     public function createGroupChannel(User $user, string $channelName): Channel
     {
+        if(!$user->upgraded){
+            if(count($user->owned_channels) > 4){
+                abort(response('Free channels limit exceeded (5), upgrade to create more.', 403));    
+            }
+        }
         $existingChannel = $this->channel->query()->where('name', $channelName)->first();
         error_log('existing channel: ' . json_encode($existingChannel));
         if (!$existingChannel) {

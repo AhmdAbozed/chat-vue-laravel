@@ -9,7 +9,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['requestResolved'])
 const processing = ref(false)
-
+const limitExceeded = ref(false)
 
 async function resolveRequest(accept: boolean) {
     try {
@@ -39,6 +39,13 @@ async function resolveRequest(accept: boolean) {
             emit("requestResolved")
             return true
         }
+        else if(res.status == 403){
+            limitExceeded.value = true;
+            setTimeout(() => {
+                limitExceeded.value = false;
+            }, 3000);
+            return false;
+        }
         else {
             return false
         }
@@ -66,6 +73,10 @@ async function resolveRequest(accept: boolean) {
                     <img src="../assets/reject.svg" class="h-[2.4rem] my-auto">
                 </button>
             </div>
+        </div>
+        <div class=" text-gray-400 px-2 py-1 rounded-lg absolute bottom-12 ml-2 bg-gray-950 bg-opacity-65 animate-fadeInOut"
+            role="alert" v-if="limitExceeded">
+            <span class="block sm:inline">Member limit exceeded, upgrade to add more</span>
         </div>
     </div>
 </template>

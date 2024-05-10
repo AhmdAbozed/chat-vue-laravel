@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'upgraded'
     ];
 
     /**
@@ -83,4 +84,9 @@ class User extends Authenticatable
     public function requests(): HasMany{
         return $this->hasMany(JoinRequest::class);
     }
+    public function owned_channels(): HasMany
+    {
+        return $this->hasMany(Channel::class);
+    }
+
 }

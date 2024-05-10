@@ -30,7 +30,6 @@ export const EchoObj = new Echo({
                 }).then((response: any) => {
                     return response.json()
                 }).then((response: any) => {
-                    console.log(response)
                     callback(null, response);
                 }).catch(error => {
                     callback(error);
