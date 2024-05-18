@@ -11,7 +11,7 @@ const unreadCount = ref(props.channelItemObj!.unreadCount)
 
 const activeChannel = inject('currentChannelInjection') as any
 const activeStatus = ref(false)
-//when active, both msg listen and unread listen catch event
+
 function listenToChannel() {
     EchoObj.private("chat." + props.channelItemObj!.id).listen(".NewMsgSent", async (e: any) => {
         //if opened channel, don't increment unread
@@ -38,7 +38,7 @@ watch(activeChannel, () => {
 <template>
     <div>
         <div :class="`${activeStatus ? 'bg-gray-600' : 'bg-gray-700'} w-full min-h-16 mb-4 shadow-md flex`"
-            @click="() => { emit('setChatChild', { id: props.channelItemObj!.id, name: props.channelItemObj!.name, type: props.channelItemObj!.type} as channelObj) }">
+            @click="() => { emit('setChatChild', props.channelItemObj?.id) }">
             <img src="../assets/prof3.svg" class="h-12 my-auto">
             <div class="flex flex-col my-auto translate-y-0.5 ml-1 overflow-x-hidden overflow-ellipsis">
                 <div class="text-gray-100">{{ props.channelItemObj!.name }}</div>

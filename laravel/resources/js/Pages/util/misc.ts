@@ -23,4 +23,9 @@ export function isImage(fileName: string) {
     const extension = fileName.split('.').pop()!.toLowerCase();
 
     return validImageExtensions.includes(extension);
-  }
+}
+
+export function  getFileSize(file: File) {
+    if (file.size > 100000) return (file.size / (1024 * 1024)).toFixed(2) + "MB";
+    else return (file.size / 1024).toFixed(2) + "KB";
+}

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import chatItem from '../components/chatItem.vue'
+import channelItem from '../components/channelItem.vue'
 import groupsPanel from './groupsPanel.vue'
 import newChatInput from '../components/newChatInput.vue';
 import { ref, watch } from 'vue';
@@ -8,8 +8,9 @@ const props = defineProps({
     channelItemsList: Array<channelObj>,
     showList: Boolean
 })
-const emit = defineEmits(['setChat', 'setShowList', 'newChatAdded'])
+const emit = defineEmits(['setChannel', 'setShowList', 'newChatAdded'])
 const displayGroup = ref(false);
+
 </script>
 <template>
     <section class="sm:w-96 sm:max-w-[25vw] col-start-1 row-start-1 bg-gray-800 text-gray-200 text-lg flex flex-col z-20 "
@@ -31,15 +32,14 @@ const displayGroup = ref(false);
             </div>
             <div class=" flex-grow bg-gray-925 " v-if="channelItemsList">
                 <div class="flex flex-col overflow-y-auto flex-grow ">
-                    <chatItem v-for="channelObj in props.channelItemsList" :key="channelObj.id"
+                    <channelItem v-for="channelObj in channelItemsList" :key="channelObj.id" :channelIndex="channelItemsList.indexOf(channelObj)"
                         :channelItemObj="channelObj"
-                        @setChatChild="(chat) => { console.log('emit'); emit('setChat', chat) }"></chatItem>
+                        @setChatChild="(channelId: number) => { console.log('emit', channelId); emit('setChannel', channelId) }"></channelItem>
                 </div>
             </div>
             <div class="flex-grow bg-gray-925 text-gray-400" v-else>
                 No Chats yet..
             </div>
-
 
             <newChatInput @newChatAdded="(e: any) => { console.log('first emit reached'); emit('newChatAdded', true) }">
             </newChatInput>

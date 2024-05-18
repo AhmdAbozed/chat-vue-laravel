@@ -52,7 +52,6 @@ const openGateway = () => {
                         </div>
 
                         <div class="text-gray-400">
-
                             <p>
                                 Private Chat
                             </p>
@@ -71,8 +70,6 @@ const openGateway = () => {
                                 Suitable for small communities and private chat with individuals only
                             </p>
                         </div>
-
-
                     </div>
                     <div class=" mt-auto py-6 px-6">
                         <button class="bg-blue-600 rounded-lg py-3 px-4 text-white text-sm font-semibold">{{
@@ -99,7 +96,6 @@ const openGateway = () => {
                         </div>
 
                         <div class="text-gray-400 font-medium">
-
                             <p>
                                 Private Chat
                             </p>
@@ -118,19 +114,18 @@ const openGateway = () => {
                                 Suitable for Communities of any size
                             </p>
                         </div>
-
-
                     </div>
+
                     <div class=" mt-6 py-6 px-6">
                         <button @click="openGateway()" :disabled="props.signedUserId?.upgraded"
                             class="bg-blue-600 rounded-lg py-3 px-4 text-white text-sm font-semibold mt-auto">{{
                             props.signedUserId?.upgraded
-                            ? 'Current Plan':'Upgrade +'}}
+                                ? 'Current Plan' : 'Upgrade +' }}
                         </button>
                     </div>
 
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
 </template>

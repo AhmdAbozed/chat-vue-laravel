@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import chatMsg from './components/chatMsg.vue';
-import chatsList from '@/Pages/panels/chatsList.vue'
+import channelsList from '@/Pages/panels/channelsList.vue'
 import { EchoObj } from '@/Pages/util/echo';
-import { ref, watch, onMounted, provide } from 'vue';
+import { ref, watch, onMounted, provide, toRaw } from 'vue';
 import type { PropType } from 'vue'
 import type { channelObj, msgObj, fileHeaderData } from '@/Pages/util/types'
 import { getChannels, getMsgs } from '@/Pages/util/homeService'
+import { getFileSize } from '@/Pages/util/misc'
 import detailsPanel from '@/Pages/panels/detailsPanel.vue'
 
 type messagesStateType = {
@@ -18,44 +19,47 @@ const props = defineProps({
 })
 provide('signedInUser', props.signedUserId)
 
-const messages = ref<messagesStateType>();
+const channels = ref<Array<channelObj>>();
+const currentChannel = ref<channelObj>();
 const uploadedFile = ref<File | null>(null);
 const uploadedImgUrl = ref();
-const currentChannel = ref<channelObj>();
-const channelsList = ref<Array<channelObj>>();
+
 const showList = ref(true);
 const showDetails = ref(false);
+const isLoadingMessages = ref(false)
 
 provide('currentChannelInjection', currentChannel)
 
 onMounted(async () => {
-    const channels = await getChannels();
-    channelsList.value = channels;
-    currentChannel.value = channels[0]
+    const fetchedChannels = await getChannels();
+    channels.value = fetchedChannels;
+    currentChannel.value = fetchedChannels[0]
 
 })
+async function setMessages(channel: channelObj, withFileToken: boolean) {
+    console.log('getting message')
+    const newMsgs = await getMsgs(channel, withFileToken);
+    channel.messages = newMsgs.messages;
+    channel.file = { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl };
+}
 
-let abortGetMessages: AbortController; 
 watch(currentChannel, async (newChannel) => {
     if (newChannel) {
-        if(abortGetMessages){
-            abortGetMessages.abort();
+        if (!newChannel.messages) {
+            isLoadingMessages.value = true
+            setMessages(newChannel, true)
         }
-        abortGetMessages = new AbortController();
-        const newMsgs = await getMsgs(newChannel, true, abortGetMessages.signal);
         if (window.innerWidth < 650) showList.value = false;
-        messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } }
         EchoObj.private("chat." + newChannel.id).stopListening(".NewMsgSent");
         EchoObj.private("chat." + newChannel.id)
             .listen(".NewMsgSent", async (e: any) => {
                 console.log("caught something?")
                 console.log(e);
-                const newMsgs = await getMsgs(currentChannel.value!, false, abortGetMessages.signal);
-                messages.value = { messagesArr: newMsgs.messages, file: { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl } };
+                setMessages(channels.value!.find((channel:channelObj)=>channel.id == e.channel_id)!, false);
             })
     }
-
 })
+
 function filesOnChange(event: Event) {
     const file = (event.target as HTMLInputElement).files!
     if (file[0]) {
@@ -89,31 +93,27 @@ async function sendMsg(e: Event) {
     const res = await fetch(endpoint, options);
     const json = await res.json()
     if (res.status === 200) {
-        console.log('message sent',json);
+        console.log('message sent', json);
     }
-}
-function getFileSize(file: File) {
-    if (file.size > 100000) return (file.size / (1024 * 1024)).toFixed(2) + "MB";
-    else return (file.size / 1024).toFixed(2) + "KB";
 }
 </script>
 <template>
     <div class="grid grid-rows-1 sm:flex grid-cols-1 h-svh">
 
-        <chatsList :showList="showList" :channelItemsList="channelsList"
-            @newChatAdded="async () => { console.log('second emit'); const chats = await getChannels(); channelsList = chats; }"
-            @setChat="(chat: channelObj) => { if (chat.name != currentChannel?.name) currentChannel = chat; }"
+        <channelsList :showList="showList" :channelItemsList="channels"
+            @newChatAdded="async () => { console.log('second emit'); const chats = await getChannels(); channels = chats; }"
+            @setChannel="(channelId: number) => { currentChannel = channels!.find((channel:channelObj)=>channel.id == channelId) }"
             @setShowList="(newShowList: any) => { console.log('changing showlist: ' + newShowList); showList = newShowList; }">
-        </chatsList>
+        </channelsList>
 
         <section class="bg-gray-800 text-gray-300 flex flex-col col-start-1 row-start-1 min-w-0 flex-grow">
 
             <section class="bg-gray-900 p-3 h-14 shadow-gray-800 drop-shadow-lg z-10 flex items-center">
                 <button @click="() => { showList = true }" v-if="!showList">
-                    <img src="./assets/menu.svg" class="h-8 opacity-90">
+                    <img src="@/Pages/assets/menu.svg" class="h-8 opacity-90">
                 </button>
                 <div class="flex cursor-pointer" @click="() => { showDetails = true }">
-                    <img src="./assets/prof3.svg" class="h-12 my-auto">
+                    <img src="@/Pages/assets/prof3.svg" class="h-12 my-auto">
                     <div class="flex flex-col ml-1">
                         <div class="text-lg translate-y-1">{{ currentChannel?.name }}</div>
                         <div class="text-sm text-gray-400">Click here for details</div>
@@ -121,13 +121,15 @@ function getFileSize(file: File) {
                 </div>
             </section>
 
-            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto"
-                v-if="currentChannel && messages">
-                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="messages?.file"
-                    v-for="messageObj in messages!.messagesArr" :key="messageObj.id">
+            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto mb-2"
+                v-if="currentChannel && currentChannel.messages && currentChannel.file">
+                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="currentChannel.file!"
+                    v-for="messageObj in currentChannel.messages!" :key="messageObj.id">
                 </chatMsg>
             </section>
-
+            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else-if="isLoadingMessages">
+                <img src="@/Pages/assets/roller.svg" class="mx-auto mb-10 opacity-20 w-4/12 max-w-32"></img>
+            </section>
             <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else>
                 <p class="mx-auto mb-5 text-gray-400 text-lg">Select a Conversation To Begin Chatting </p>
             </section>
@@ -135,21 +137,21 @@ function getFileSize(file: File) {
             <section class="  bg-gray-925 items-start flex" v-if="uploadedFile">
 
                 <img :src="uploadedImgUrl" class="h-8 my-auto" v-if="uploadedFile.type.match('^image/')">
-                <img src="./assets/file.svg" class="h-8 my-auto" v-else>
+                <img src="@/Pages/assets/file.svg" class="h-8 my-auto" v-else>
                 <div class="flex flex-col">
                     <p class="text-gray-300 ">{{ uploadedFile?.name }} </p>
                     <p class="text-gray-400 ">{{ getFileSize(uploadedFile!) }} </p>
 
                 </div>
                 <button class="ml-auto" @click="() => { uploadedFile = null }">
-                    <img src="./assets/exit.svg" class="h-8 ml-auto">
+                    <img src="@/Pages/assets/exit.svg" class="h-8 ml-auto">
                 </button>
 
             </section>
             <form class="flex p-2 bg-gray-900" @submit="(e) => { sendMsg(e) }">
 
                 <label htmlFor="img-upload" class="cursor-pointer">
-                    <img src="./assets/plus5.svg" class="h-8" alt="">
+                    <img src="@/Pages/assets/plus5.svg" class="h-8" alt="">
                     <input type="file" id="img-upload" className="input-button" name="img" @change="filesOnChange"
                         hidden>
                     </input>

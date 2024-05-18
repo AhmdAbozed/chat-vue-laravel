@@ -3,7 +3,9 @@ export type channelObj = {
     id: number,
     name: string,
     unreadCount: number,
-    type: 'private' | 'group'
+    type: 'private' | 'group',
+    messages: Array<msgObj> | null,
+    file: fileHeaderData | null,
 }
 export type msgObj = {
     id: number,
