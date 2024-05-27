@@ -36,7 +36,8 @@ async function createNewChat(event: Event) {
         console.log(res.status)
 
         if (res.status == 200) {
-            console.log(res.status)
+            console.log(res.status);
+            ((event.target as HTMLFormElement).children[0] as HTMLInputElement).value =''
             emit('newChatAdded', true)
             return true
         }

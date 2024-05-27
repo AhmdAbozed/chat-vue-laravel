@@ -86,7 +86,7 @@ class User extends Authenticatable
     }
     public function owned_channels(): HasMany
     {
-        return $this->hasMany(Channel::class);
+        return $this->hasMany(Channel::class, 'owner_id');
     }
 
 }

@@ -16,7 +16,7 @@ async function submitForm(event: Event) {
         formProcessing.value = true;
         const xsrf = await getXsrf();
         const target = event.target as any
-        const submission = { Username: form.username, Password: form.password }
+        const submission = { username: form.username, password: form.password }
         const options: RequestInit = {
             method: "POST",
             headers: {

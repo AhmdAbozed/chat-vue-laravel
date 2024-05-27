@@ -22,14 +22,14 @@ class MessagePostRequest extends FormRequest
     protected function prepareForValidation() 
     {
         error_log(json_encode($this->file));
-        $this->merge(['channel_id' => $this->route('id'), 'content'=>$this->message, 'file'=>$this->file]);
+        $this->merge(['channel_id' => $this->route('id'), 'message'=>$this->message, 'file'=>$this->file]);
     }
 
     public function rules(): array
     {
         return [
             'channel_id' => 'required|numeric',
-            'content' => 'required',
+            'message' => 'required',
             'file' => 'sometimes|nullable|file'
         ];
     }

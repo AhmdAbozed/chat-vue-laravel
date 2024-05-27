@@ -63,8 +63,8 @@ class ChannelService
                 abort(response('Free channels limit exceeded (5), upgrade to create more.', 403));    
             }
         }
+     
         $existingChannel = $this->channel->query()->where('name', $channelName)->first();
-        error_log('existing channel: ' . json_encode($existingChannel));
         if (!$existingChannel) {
             $channel = $this->channel->query()->create(['name' => $channelName, 'type' => 'group']);
             $channel->users()->attach($user->id);
@@ -89,7 +89,6 @@ class ChannelService
                 array_push($result, (object)['id' => $channel->id, 'name' => $channel->name, 'unreadCount' => $channel->pivot->unread_count, 'type' => 'group']);
             } else if ($channel->type == 'private') {
                 $receiver = $channel->users->except($user_id)->select('id', 'name');
-                error_log("channel in getUserChats: " . $channel);
                 array_push($result, (object)['id' => $channel->id, 'name' => $receiver[0]['name'], 'unreadCount' => $channel->pivot->unread_count, 'type' => 'private']);
             }
         }

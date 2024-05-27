@@ -41,7 +41,7 @@ const displayGroup = ref(false);
                 No Chats yet..
             </div>
 
-            <newChatInput @newChatAdded="(e: any) => { console.log('first emit reached'); emit('newChatAdded', true) }">
+            <newChatInput @newChatAdded="(e: any) => { console.log('first emit reached'); emit('newChatAdded', true);  }">
             </newChatInput>
 
         </div>

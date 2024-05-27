@@ -11,11 +11,11 @@ class UserController extends Controller
 {
     public function signup(SignupRequest $request, User $user): Response
     {
-        return response($user->signUp($request->input("Username"), $request->input("Password"), $request->input("Email")));
+        return response($user->signUp($request->input("username"), $request->input("password"), $request->input("email")));
     }
     public function login(LoginRequest $request, User $user)
     {
-            return response($user->login($request->input("Username"), $request->input("Password")));
+            return response($user->login($request->input("username"), $request->input("password")));
         
     }
 }

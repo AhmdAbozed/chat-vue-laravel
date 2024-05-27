@@ -59,7 +59,7 @@ class JoinRequestService
             if (!$channelToJoin->owner->upgraded) {
 
                 error_log('NOT UPGRADED'.count($channelToJoin->users));
-                if (count($channelToJoin->users) > 1) {
+                if (count($channelToJoin->users) > 10) {
 
                     error_log('DENIED');
                     abort(response('Members limit exceeded (10), upgrade to add more.', 403));

@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/testauth', function (Request $request) 
     error_log($request->user()->id);
     return $request->user()->id;
 });
+
 Route::middleware('auth:sanctum')->get('/chats', [ChannelController::class, 'getUserChannels']);
 Route::middleware('auth:sanctum')->get('/chats/{id}/messages', [MessageController::class, 'getMessages']);
 Route::middleware('auth:sanctum')->get('/chats/{id}/users', [ChannelController::class, 'getGroupMembers']);

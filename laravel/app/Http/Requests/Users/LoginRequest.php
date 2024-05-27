@@ -22,8 +22,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Username' => 'required|max:64|min:3|alpha_num:ascii',
-            'Password' => 'required|min:5|alpha_num:ascii'
+            'username' => 'required|max:64|min:3|alpha_num:ascii',
+            'password' => 'required|min:5|alpha_num:ascii'
         ];
     }
 }

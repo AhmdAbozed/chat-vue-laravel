@@ -112,7 +112,7 @@ async function sendMsg(e: Event) {
                 <button @click="() => { showList = true }" v-if="!showList">
                     <img src="@/Pages/assets/menu.svg" class="h-8 opacity-90">
                 </button>
-                <div class="flex cursor-pointer" @click="() => { showDetails = true }">
+                <div class="flex cursor-pointer" @click="() => { showDetails = true }" v-if="currentChannel">
                     <img src="@/Pages/assets/prof3.svg" class="h-12 my-auto">
                     <div class="flex flex-col ml-1">
                         <div class="text-lg translate-y-1">{{ currentChannel?.name }}</div>

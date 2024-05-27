@@ -24,7 +24,7 @@ class JoinPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            $this->input('channelName') => 'required|alpha_num:ascii'
+            'channelName' => 'required|alpha_num:ascii'
         ];
     }
 }

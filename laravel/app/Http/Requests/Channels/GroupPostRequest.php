@@ -22,7 +22,7 @@ class GroupPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:4|max:64|alpha_num:ascii'
+            'channelName' => 'required|min:4|max:64|alpha_num:ascii'
         ];
     }
 }
