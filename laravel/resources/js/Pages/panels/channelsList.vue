@@ -10,7 +10,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['setChannel', 'setShowList', 'newChatAdded'])
 const displayGroup = ref(false);
-
 </script>
 <template>
     <section class="sm:w-96 sm:max-w-[25vw] col-start-1 row-start-1 bg-gray-800 text-gray-200 text-lg flex flex-col z-20 "

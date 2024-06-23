@@ -18,7 +18,7 @@ class MessageService
         $this->channel = $channel;
         $this->fileHandler = $fileHandler;
     }
-    public function getMessagesWithNames(int $user_id, $channel_id, bool $withFileToken)
+    public function getMessagesWithNames(int $user_id, $channel_id, bool $withFileToken, bool $reset_unread)
     {
         $channel = $this->channel->query()->find($channel_id);
 
@@ -26,9 +26,11 @@ class MessageService
         if ($channel->users->find($user_id)->exists()) {
 
             //reseting unread on GET
-            $channel->users()->updateExistingPivot($user_id, [
-                'unread_count' => 0,
-            ]);
+            if($reset_unread){
+                $channel->users()->updateExistingPivot($user_id, [
+                    'unread_count' => 0,
+                ]);
+            }
             $messages = $this->message->query()->where('channel_id', $channel_id)->select('id', 'user_id', 'channel_id', 'content', 'updated_at', 'file_name', 'file_size')->get();
             $messagesWithNames = [];
             foreach ($messages as $message) {

@@ -32,34 +32,53 @@ provide('currentChannelInjection', currentChannel)
 
 onMounted(async () => {
     const fetchedChannels = await getChannels();
+    fetchedChannels.forEach((channel: channelObj) => {
+        listenToMsgChannel(channel, false);
+    });
     channels.value = fetchedChannels;
     currentChannel.value = fetchedChannels[0]
 
 })
-async function setMessages(channel: channelObj, withFileToken: boolean) {
+async function setMessages(channel: channelObj, withFileToken: boolean, reset_unread: boolean) {
     console.log('getting message')
-    const newMsgs = await getMsgs(channel, withFileToken);
+    const newMsgs = await getMsgs(channel, withFileToken, reset_unread);
     channel.messages = newMsgs.messages;
     channel.file = { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl };
 }
 
+
 watch(currentChannel, async (newChannel) => {
+    //When switching to a new channel, fetch messages to reset unread and update listener to also update messages
     if (newChannel) {
-        if (!newChannel.messages) {
-            isLoadingMessages.value = true
-            setMessages(newChannel, true)
-        }
+        isLoadingMessages.value = true
+        setMessages(newChannel, true, true)
+
         if (window.innerWidth < 650) showList.value = false;
-        EchoObj.private("chat." + newChannel.id).stopListening(".NewMsgSent");
-        EchoObj.private("chat." + newChannel.id)
-            .listen(".NewMsgSent", async (e: any) => {
-                console.log("caught something?")
-                console.log(e);
-                setMessages(channels.value!.find((channel:channelObj)=>channel.id == e.channel_id)!, false);
-            })
+        listenToMsgChannel(newChannel!, true);
+        const newChannelObj = channels.value!.find((channel: channelObj) => channel.id == newChannel.id);
+        newChannelObj!.unreadCount = 0
+        //reset unread on openning channel, also resets on NewMsgSent while channel is open
     }
 })
-
+function listenToMsgChannel(chatChannel: channelObj, updateMessages: boolean) {
+    EchoObj.private("chat." + chatChannel.id).stopListening(".NewMsgSent");
+    EchoObj.private("chat." + chatChannel.id)
+        .listen(".NewMsgSent", async (e: any) => {
+            console.log("caught something?")
+            console.log(e);
+            const newChannelObj = channels.value!.find((channel: channelObj) => channel.id == e.channel_id)
+            const isCurrentChannel = currentChannel.value?.id == newChannelObj!.id
+            if (updateMessages) {
+                setMessages(newChannelObj!, false, isCurrentChannel);
+            }
+          
+            if (isCurrentChannel) {
+                newChannelObj!.unreadCount = 0;
+            } else {
+                newChannelObj!.unreadCount += 1;
+            }
+        })
+}
 function filesOnChange(event: Event) {
     const file = (event.target as HTMLInputElement).files!
     if (file[0]) {
@@ -102,7 +121,7 @@ async function sendMsg(e: Event) {
 
         <channelsList :showList="showList" :channelItemsList="channels"
             @newChatAdded="async () => { console.log('second emit'); const chats = await getChannels(); channels = chats; }"
-            @setChannel="(channelId: number) => { currentChannel = channels!.find((channel:channelObj)=>channel.id == channelId) }"
+            @setChannel="(channelId: number) => { currentChannel = channels!.find((channel: channelObj) => channel.id == channelId) }"
             @setShowList="(newShowList: any) => { console.log('changing showlist: ' + newShowList); showList = newShowList; }">
         </channelsList>
 
@@ -113,12 +132,16 @@ async function sendMsg(e: Event) {
                     <img src="@/Pages/assets/menu.svg" class="h-8 opacity-90">
                 </button>
                 <div class="flex cursor-pointer" @click="() => { showDetails = true }" v-if="currentChannel">
-                    <img src="@/Pages/assets/prof3.svg" class="h-12 my-auto">
+                    <img src="@/Pages/assets/prof3.svg" class="h-12 my-auto" v-if="currentChannel!.type === 'private'">
+                    <img src="@/Pages/assets/g1.svg" class="h-11 my-auto" v-else-if="currentChannel!.type === 'group'">
                     <div class="flex flex-col ml-1">
                         <div class="text-lg translate-y-1">{{ currentChannel?.name }}</div>
                         <div class="text-sm text-gray-400">Click here for details</div>
                     </div>
                 </div>
+                <button
+                    class="bg-blue-950 rounded-full text-sm pt-[0.35rem] pb-2 px-3 ml-auto my-auto hover:bg-blue-800 text-blue-100"><a
+                        href="./upgrade">Upgrade</a></button>
             </section>
 
             <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto mb-2"
@@ -127,7 +150,8 @@ async function sendMsg(e: Event) {
                     v-for="messageObj in currentChannel.messages!" :key="messageObj.id">
                 </chatMsg>
             </section>
-            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else-if="isLoadingMessages">
+            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto"
+                v-else-if="isLoadingMessages">
                 <img src="@/Pages/assets/roller.svg" class="mx-auto mb-10 opacity-20 w-4/12 max-w-32"></img>
             </section>
             <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto" v-else>

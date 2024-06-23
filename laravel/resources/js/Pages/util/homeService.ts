@@ -21,7 +21,7 @@ export async function getChannels() {
     }
     else return;
 }
-export async function getMsgs(channel: channelObj, withFileToken: boolean) {
+export async function getMsgs(channel: channelObj, withFileToken: boolean, reset_unread: boolean) {
     if (channel) {
         const options: RequestInit = {
             method: "GET",
@@ -32,7 +32,7 @@ export async function getMsgs(channel: channelObj, withFileToken: boolean) {
             },
             credentials: "include",
         }
-        const endpoint = location.protocol + "//" + location.host + "/_api/chats/" +channel.id + "/messages?withFileToken="+ `${withFileToken ? 1 : 0}`;
+        const endpoint = location.protocol + "//" + location.host + "/_api/chats/" +channel.id + "/messages?withFileToken="+ `${withFileToken ? 1 : 0}`+`&resetUnread=${reset_unread?1:0}`;
         const res = await fetch(endpoint, options);
         if (res.status === 200) {
             const toJson = await res.json();

@@ -17,7 +17,7 @@ class MessageController extends Controller
 
     public function getMessages(Request $request, MessageService $MessageService, $channel_id): Response
     {
-        $messages = $MessageService->getMessagesWithNames($request->user()->id, $channel_id, $request->query('withFileToken'));
+        $messages = $MessageService->getMessagesWithNames($request->user()->id, $channel_id, $request->query('withFileToken'),  $request->input('resetUnread'));
         return response($messages);
     }
 }

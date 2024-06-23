@@ -21,18 +21,24 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin'),
         ]);
         DB::table('users')->insert([
-            'name' => 'testuser',
+            'name' => 'Ahmed',
             'email' => 'testuser' . '@gmail.com',
             'password' => bcrypt('testuser'),
         ]);
         DB::table('users')->insert([
-            'name' => 'testuser2',
+            'name' => 'David',
             'email' => 'testuser2' . '@gmail.com',
             'password' => bcrypt('testuser'),
         ]);
         DB::table('users')->insert([
-            'name' => 'testuser3',
+            'name' => 'Alex',
             'email' => 'testuser3' . '@gmail.com',
+            'password' => bcrypt('testuser'),
+        ]);
+        
+        DB::table('users')->insert([
+            'name' => 'Mohammed',
+            'email' => 'testuser4' . '@gmail.com',
             'password' => bcrypt('testuser'),
         ]);
 
@@ -51,7 +57,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         
-        DB::table('channels')->insert(['type'=>'group', 'owner_id'=>'1', 'name'=>'testgroup']);
+        DB::table('channels')->insert(['type'=>'group', 'owner_id'=>'1', 'name'=>'College Group']);
         
         DB::table('channel_users')->insert([
             'channel_id' => '2',
@@ -63,9 +69,14 @@ class DatabaseSeeder extends Seeder
             'user_id' => '2',
         ]);
         
-        DB::table('join_requests')->insert([
+        DB::table('channel_users')->insert([
             'channel_id' => '2',
             'user_id' => '3',
+        ]);
+        
+        DB::table('join_requests')->insert([
+            'channel_id' => '2',
+            'user_id' => '4',
             'status' => 'pending'
         ]);
     }
