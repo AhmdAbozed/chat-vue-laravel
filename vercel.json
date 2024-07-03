@@ -20,6 +20,7 @@
         "APP_DEBUG": "true",
         "comment":"without ASSET_URL, vite builds all links in http, which causes mixed type error on chrome",
         "ASSET_URL": "https://",
+        "APP_URL":"https://",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -30,6 +31,11 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
-        "BROADCAST_DRIVER": "pusher"
+        "BROADCAST_DRIVER": "pusher",
+        
+        "BLAZE_KEY_ID": "544fb55ddb2b",
+        "BLAZE_KEY": "003538c937dfa392dfe59db21cd325592bd32a4d19",
+        "BLAZE_BUCKET_ID":"851434df1bf5e5ad8deb021b",
+        "BLAZE_TOKEN_DURATION":"3600"
     }
 }
