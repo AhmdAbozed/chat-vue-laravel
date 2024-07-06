@@ -7,16 +7,16 @@ const props = defineProps({
     msgObj: Object as PropType<msgObj>,
     fileHeaderData: Object as PropType<fileHeaderData>,
     channelId: Number
-})
+});
 //If msg belongs to current user, append it to leftside, otherwise rightside
-const signedUserId = (inject('signedInUser') as any).id
+const signedUser:any = inject('signedInUser');
 function getFileUrl(){
     return props.fileHeaderData?.fileUrl + '/file/abozedchatapp/channel'+props.channelId+'/'+props.msgObj!.file_name+'?Authorization='+props.fileHeaderData?.fileToken+'&b2ContentDisposition=attachment'
-}
+};
 </script>
 <template>
-    <div :class="`${signedUserId === msgObj?.user_id ? '' : 'ml-auto mr-2'} flex `">
-        <img src="../assets/prof3.svg" class="h-10" v-if="(signedUserId === msgObj?.user_id)">
+    <div :class="`${signedUser.id === msgObj?.user_id ? '' : 'ml-auto mr-2'} flex `">
+        <img src="../assets/prof3.svg" class="h-10" v-if="(signedUser.id === msgObj?.user_id)">
         <div class="">     
             <div class="bg-gray-700 pb-1  pt-1 px-3  rounded-lg mt-1 z-10 relative flex flex-col ">
                 <div class="text-xs text-gray-400">{{props.msgObj!.user}}</div>
@@ -37,7 +37,7 @@ function getFileUrl(){
                     </a>
             </div>
         </div>
-        <img src="../assets/prof3.svg" class="h-10" v-if="!(signedUserId === msgObj?.user_id)">
+        <img src="../assets/prof3.svg" class="h-10" v-if="!(signedUser.id === msgObj?.user_id)">
         
     </div> 
 </template>

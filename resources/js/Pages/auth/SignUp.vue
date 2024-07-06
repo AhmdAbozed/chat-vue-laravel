@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import getXsrf from '../util/xsrf';
-import { Link } from '@inertiajs/vue3'
+import { Link, router } from '@inertiajs/vue3'
 import { ref } from 'vue';
 
 const formProcessing = ref(false)
@@ -36,6 +36,8 @@ async function submitForm(event: Event) {
 
         if (res.status == 200) {
             console.log(res.status)
+            
+            router.visit('/login')
             //document.getElementById("result")!.innerHTML = "200. Response recieved"
         }
         else if(res.status == 403){

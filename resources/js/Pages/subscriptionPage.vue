@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 const props = defineProps({
-    signedUserId: Object as PropType<{ id: number, name: string, email: string, upgraded: boolean }>
+    signedUser: Object as PropType<{ id: number, name: string, email: string, upgraded: boolean }>
 })
 
 const openGateway = () => {
@@ -76,7 +76,7 @@ const openGateway = () => {
 
                     <div class=" mt-3 pb-6 px-6">
                         <button class="bg-blue-600 rounded-lg py-3 px-4 text-white text-sm font-semibold">{{
-                            props.signedUserId?.upgraded
+                            props.signedUser?.upgraded
                                 ? 'Downgrade +' : 'Current Plan' }}
                         </button>
                     </div>
@@ -124,9 +124,9 @@ const openGateway = () => {
                     </p>
 
                     <div class=" mt-3 pb-6 px-6">
-                        <button @click="openGateway()" :disabled="props.signedUserId?.upgraded"
+                        <button @click="openGateway()" :disabled="props.signedUser?.upgraded"
                             class="bg-blue-600 rounded-lg py-3 px-4 text-white text-sm font-semibold mt-auto">{{
-                            props.signedUserId?.upgraded
+                            props.signedUser?.upgraded
                                 ? 'Current Plan' : 'Upgrade +' }}
                         </button>
                     </div>

@@ -37,4 +37,4 @@ Route::middleware('auth:sanctum')->post('/requests', [JoinRequestController::cla
 Route::post('/users/signup', [UserController::class, 'signup']);
 Route::post('/users/login', [UserController::class, 'login']);
 
-Route::get('/webhooks/new_subscription', [CheckoutController::class, 'HandleSubsriptionWebhook']);
+Route::post('/webhooks/new_subscription', [CheckoutController::class, 'HandleSubsriptionWebhook']);

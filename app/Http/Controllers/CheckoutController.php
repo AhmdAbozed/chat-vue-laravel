@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Services\CheckoutService;
-use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
-    public function HandleSubsriptionWebhook(CheckoutService $checkoutService, FacadesRequest $request){
+    public function HandleSubsriptionWebhook(CheckoutService $checkoutService, Request $request){
         $response = $checkoutService->handleSubscriptionEvent($request);
         return response($response);
     }

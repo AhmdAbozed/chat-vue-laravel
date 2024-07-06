@@ -2,8 +2,7 @@
 
 namespace App\Services;
 use App\Models\User;
-use Request;
-
+use Illuminate\Http\Request;
 class CheckoutService
 {
     private $user;
@@ -40,8 +39,10 @@ class CheckoutService
     public function handleSubscriptionEvent(Request $request)
     {
         $secretKey = config('checkout.secret_key');
+        error_log(json_encode($request));
         $verified = $this->verifyHash($this->serializeArray($request->all()), $request->input('SIGNATURE_SHA3_256'), $secretKey);
         if($verified){
+            error_log($verified);
             $upgraded = $this->upgradeUser($request->input("EMAIL"));
             $responseDate = date("YmdGis");
             $stringForHash = $this->serializeArray(['license' => $request->input('LICENSE_CODE'), 'expDate' => $request->input('EXPIRATION_DATE'), 'Date'=>$responseDate]);

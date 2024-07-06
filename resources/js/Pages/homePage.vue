@@ -11,9 +11,9 @@ import detailsPanel from '@/Pages/panels/detailsPanel.vue'
 
 //prop from inertia.render at backend
 const props = defineProps({
-    signedUserId: Object as PropType<{ id: number, name: string, email: string }>
+    signedUser: Object as PropType<{ id: number, name: string, email: string, upgraded: boolean }>
 })
-provide('signedInUser', props.signedUserId)
+provide('signedInUser', props.signedUser)
 
 const channels = ref<Array<channelObj>>();
 const currentChannel = ref<channelObj>();
@@ -144,8 +144,7 @@ async function sendMsg(e: Event) {
 
             <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto mb-2"
                 v-if="currentChannel && currentChannel.messages && currentChannel.file">
-                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="currentChannel.file!"
-                    v-for="messageObj in currentChannel.messages!" :key="messageObj.id">
+                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="currentChannel.file!" v-for="messageObj in currentChannel.messages!" :key="messageObj.id">
                 </chatMsg>
             </section>
             <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto"
