@@ -82,7 +82,7 @@ Click group icon at top of chats panel, then create a new group, or enter name o
 <h3 style="margin-top:0.5rem margin-bottom:0">3. Upgrading account:</h3>
 
 <img src="images/chat4.png" alt="Chat2" style="margin: 0 auto; max-width: 60rem; width: 90vw;   transform: translate(); display:block; margin-bottom:1rem">
-Click group icon at top of chats panel, then create a new group, or enter name of an existing group to send a join request to its owner. Owner will then receive the request on group's details panel on the right 
+Click Upgrade to open sandbox 2checkout gateway, <br>use testing card number: 6011111111111117, with name: John Doe.<br> Fill email with your chat account's email.<br> Fill remaining inputs with any value then place order.<br> Your account should now say upgraded at top of chat page.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

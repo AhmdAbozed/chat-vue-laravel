@@ -5,7 +5,7 @@ import { EchoObj } from '@/Pages/util/echo';
 import { ref, watch, onMounted, provide, toRaw } from 'vue';
 import type { PropType } from 'vue'
 import type { channelObj } from '@/Pages/util/types'
-import { getChannels, getMsgs } from '@/Pages/util/homeService'
+import { getChannels, getMsgs, sendMsg } from '@/Pages/util/homeService'
 import { getFileSize } from '@/Pages/util/misc'
 import detailsPanel from '@/Pages/panels/detailsPanel.vue'
 
@@ -17,16 +17,20 @@ provide('signedInUser', props.signedUser)
 
 const channels = ref<Array<channelObj>>();
 const currentChannel = ref<channelObj>();
+
+//Holds File info before its sent to backend with message
 const uploadedFile = ref<File | null>(null);
 const uploadedImgUrl = ref();
 
 const showList = ref(true);
 const showDetails = ref(false);
+
 const isLoadingMessages = ref(false)
 
 provide('currentChannelInjection', currentChannel)
 
 onMounted(async () => {
+    //onMount, set all channels to listen for new messages for updating unread count, without fetching messages.
     const fetchedChannels = await getChannels();
     fetchedChannels.forEach((channel: channelObj) => {
         listenToMsgChannel(channel, false);
@@ -36,9 +40,10 @@ onMounted(async () => {
 
 })
 async function setMessages(channel: channelObj, withFileToken: boolean, reset_unread: boolean) {
-    console.log('getting message')
+    console.log('getting messages')
     const newMsgs = await getMsgs(channel, withFileToken, reset_unread);
     channel.messages = newMsgs.messages;
+    //if fileToken for BB auth is missing, fetch it otherwise set to false
     if(withFileToken){
         channel.file = { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl };
     }
@@ -46,7 +51,7 @@ async function setMessages(channel: channelObj, withFileToken: boolean, reset_un
 
 
 watch(currentChannel, async (newChannel) => {
-    //When switching to a new channel, fetch messages to reset unread and update listener to also update messages
+    //When opening a new channel, fetch messages, reset unread and update listener to also update messages.
     if (newChannel) {
         isLoadingMessages.value = true
         setMessages(newChannel, true, true)
@@ -62,14 +67,15 @@ function listenToMsgChannel(chatChannel: channelObj, updateMessages: boolean) {
     EchoObj.private("chat." + chatChannel.id).stopListening(".NewMsgSent");
     EchoObj.private("chat." + chatChannel.id)
         .listen(".NewMsgSent", async (e: any) => {
-            console.log("caught something?")
-            console.log(e);
+            console.log("caught something?", e)
             const newChannelObj = channels.value!.find((channel: channelObj) => channel.id == e.channel_id)
             const isCurrentChannel = currentChannel.value?.id == newChannelObj!.id
+            
+            //If true, update message on catch, only enabled for opened channels, while unopened ones only update unread count
             if (updateMessages) {
+                //if it isn't current displayed Channel, don't reset unread as user hasn't seen them yet
                 setMessages(newChannelObj!, false, isCurrentChannel);
             }
-          
             if (isCurrentChannel) {
                 newChannelObj!.unreadCount = 0;
             } else {
@@ -84,7 +90,7 @@ function filesOnChange(event: Event) {
         uploadedFile.value = file![0];
     }
 }
-async function sendMsg(e: Event) {
+async function sendMsgs(e: Event) {
     e.preventDefault();
     if (!currentChannel.value || !currentChannel.value.id) {
         return
@@ -169,7 +175,7 @@ async function sendMsg(e: Event) {
                 </button>
 
             </section>
-            <form class="flex p-2 bg-gray-900" @submit="(e) => { sendMsg(e) }">
+            <form class="flex p-2 bg-gray-900" @submit="(e) => { if(currentChannel)sendMsg(e, currentChannel?.id, uploadedFile); uploadedFile = null; }">
 
                 <label htmlFor="img-upload" class="cursor-pointer">
                     <img src="@/Pages/assets/plus5.svg" class="h-8" alt="">
