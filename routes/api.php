@@ -36,8 +36,8 @@ Route::middleware('auth:sanctum')->post('/requests', [JoinRequestController::cla
 
 Route::post('/users/signup', [UserController::class, 'signup']);
 Route::post('/users/login', [UserController::class, 'login']);
-
-Route::post('/webhooks/new_subscription', [CheckoutController::class, 'HandleSubsriptionWebhook']);
+Route::post('/users/signup/demo', [UserController::class, 'createDemoAccount']);
+Route::post('/webhooks/new_subscription', [CheckoutController::class, 'handleSubsriptionWebhook']);
 
 Route::get('/webhooks/new_subscription', function(){
     //For initial configuration of 2checkout urls

@@ -64,7 +64,7 @@ class User extends Authenticatable
         if (User::where('name', $username)->exists()) {
             abort(response()->json('Username already in-use.', 403));
         }
-        
+
         $User = User::create([
             'name' => $username,
             'password' => $password,

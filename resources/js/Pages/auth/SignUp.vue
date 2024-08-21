@@ -6,7 +6,7 @@ import { ref } from 'vue';
 const formProcessing = ref(false)
 const errorMsg = ref("")
 
-async function submitForm(event: Event) {
+async function submitSignupForm(event: Event) {
     try {
         console.log("err")
         event.preventDefault();
@@ -20,14 +20,14 @@ async function submitForm(event: Event) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Credentials': 'true',
                 'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
-                'Accept':'application/json'
+                'Accept': 'application/json'
 
             },
             credentials: "include",
 
             body: JSON.stringify(submission)
         }
-        const endpoint = location.protocol+"//"+location.host+"/_api/users/signup"
+        const endpoint = location.protocol + "//" + location.host + "/_api/users/signup"
         const res = await fetch(endpoint, options);
         console.log(res.status)
 
@@ -36,11 +36,11 @@ async function submitForm(event: Event) {
 
         if (res.status == 200) {
             console.log(res.status)
-            
+
             router.visit('/login')
             //document.getElementById("result")!.innerHTML = "200. Response recieved"
         }
-        else if(res.status == 403){
+        else if (res.status == 403) {
             errorMsg.value = (await res.json())!
 
             formProcessing.value = false;
@@ -49,7 +49,7 @@ async function submitForm(event: Event) {
             errorMsg.value = ("Something went wrong. Try again later.")!
 
             formProcessing.value = false;
-            
+
         }
         return res;
     }
@@ -72,7 +72,7 @@ async function submitForm(event: Event) {
                         class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                         Create an account
                     </h1>
-                    <form class="space-y-4 md:space-y-6" action="#" @submit="submitForm">
+                    <form class="space-y-4 md:space-y-6" action="#" @submit="submitSignupForm">
                         <div>
                             <label for="email"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
@@ -105,8 +105,9 @@ async function submitForm(event: Event) {
                             {{ errorMsg }}
                         </div>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            Already have an Account? <Link href="/login"
-                                class="font-medium text-blue-600 hover:underline dark:text-blue-500">Login</Link>
+                            Already have an Account?
+                            <Link href="/login" class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                            Login</Link>
                         </p>
                     </form>
                 </div>
