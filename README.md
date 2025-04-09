@@ -45,21 +45,27 @@ Subscription System powered by 2Checkout Payment Gateway.
    
 1. Install Composer, PHP and NPM
 
-1. Install Composer Packages
+2. Install Composer Packages
    ```sh
-   composer update 
+   composer install 
    ```
-2. Run Migrations
+3. Install NPM Packages
+   ```sh
+   npm i 
+   ```
+4. Run Migrations
    ```js
    php artisan migrate
    ```
-
-4. Build Front-end files 
+5. Run Seeder (Required for demo accounts)
+   ```js
+   php artisan db:seed
+   ```
+6. Build Front-end files 
    ```js
    npm run build
    ```
-
-3. Run Server
+7. Run Server
    ```js
    php artisan serve
    ```
