@@ -90,8 +90,8 @@ Click Upgrade to open sandbox 2checkout gateway, <br>use testing card number: 60
 ## Contact
 
 Whatsapp: 01228473230<br>
-Linkedin: https://www.linkedin.com/in/ahmed-hassan-abozed-6271b223a/<br>
-Project Link: https://github.com/AhmdAbozed/form-builder<br>
+Linkedin: [linkedin.com/in/ahmed-hassan-abozed-6271b223a](https://www.linkedin.com/in/ahmed-hassan-abozed-6271b223a)<br>
+Project Link: [github.com/AhmdAbozed/chat-vue-laravel](https://github.com/AhmdAbozed/chat-vue-laravel)<br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
