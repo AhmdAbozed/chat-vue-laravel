@@ -45,21 +45,27 @@ Subscription System powered by 2Checkout Payment Gateway.
    
 1. Install Composer, PHP and NPM
 
-1. Install Composer Packages
+2. Install Composer Packages
    ```sh
-   composer update 
+   composer install 
    ```
-2. Run Migrations
+3. Install NPM Packages
+   ```sh
+   npm i 
+   ```
+4. Run Migrations
    ```js
    php artisan migrate
    ```
-
-4. Build Front-end files 
+5. Run Seeder (Required for demo accounts)
+   ```js
+   php artisan db:seed
+   ```
+6. Build Front-end files 
    ```js
    npm run build
    ```
-
-3. Run Server
+7. Run Server
    ```js
    php artisan serve
    ```
@@ -90,8 +96,8 @@ Click Upgrade to open sandbox 2checkout gateway, <br>use testing card number: 60
 ## Contact
 
 Whatsapp: 01228473230<br>
-Linkedin: https://www.linkedin.com/in/ahmed-hassan-abozed-6271b223a/<br>
-Project Link: https://github.com/AhmdAbozed/form-builder<br>
+Linkedin: [linkedin.com/in/ahmed-hassan-abozed-6271b223a](https://www.linkedin.com/in/ahmed-hassan-abozed-6271b223a)<br>
+Project Link: [github.com/AhmdAbozed/chat-vue-laravel](https://github.com/AhmdAbozed/chat-vue-laravel)<br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
