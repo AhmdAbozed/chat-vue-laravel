@@ -45,8 +45,9 @@ class ChannelService
         $existingChannel = $this->channelExists($user_id, $receiverUser->id);
         if ($existingChannel->isEmpty()) {
             $channel = $this->channel->query()->create(['type' => 'private']);
-            $senderChannelUser = $channel->users()->attach($user_id);
-            $receiverChannelUser = $channel->users()->attach($receiverUser->id);
+            //attach the two users to created channel
+            $channel->users()->attach($user_id);
+            $channel->users()->attach($receiverUser->id);
 
             error_log("channel Created: " . $channel->id);
             return $channel;
@@ -60,7 +61,7 @@ class ChannelService
     {
         if(!$user->upgraded){
             if(count($user->owned_channels) > 4){
-                abort(response('Free channels limit exceeded (5), upgrade to create more.', 403));    
+                abort(response('Free groups limit exceeded (5), upgrade to create more.', 403));    
             }
         }
      
@@ -73,7 +74,7 @@ class ChannelService
             error_log("group channel Created: " . $channel->id);
             return $channel;
         } else {
-            abort(response('Channel already exists', 401));
+            abort(400, 'Group already exists');
         }
     }
 

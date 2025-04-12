@@ -43,7 +43,7 @@ class BackBlazeService
             'X-Bz-File-Name' => urlencode(mb_convert_encoding('channel' . $channelId . '/' .$filePath->getClientOriginalName(), 'UTF-8', 'ISO-8859-1')),
             'Content-Length' => File::size($filePath),
             'X-Bz-Content-Sha1' => sha1_file($filePath)
-        ])->withBody(File::get($filePath))->contentType('b2/x-auto')->post($uploadUrlBody['uploadUrl']);
+        ])->withBody(File::get($filePath))->contentType('b2/x-auto')->retry(3)->post($uploadUrlBody['uploadUrl']);
         error_log(json_encode($response->json()));
         return $response->json('fileId');
     }

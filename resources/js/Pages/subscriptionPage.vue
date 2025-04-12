@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
+import {ref} from 'vue'
 const props = defineProps({
     signedUser: Object as PropType<{ id: number, name: string, email: string, upgraded: boolean }>
 })
-
+const duration = ref('monthly'); 
 const openGateway = () => {
     open("https://secure.2checkout.com/checkout/buy?merchant=255009297353&tpl=default&prod=1B708CQUVU&qty=1", "_blank")
 }
@@ -22,11 +23,11 @@ const openGateway = () => {
             </div>
 
             <div class=" mt-7 flex ">
-                <button
+                <button @click="duration = 'monthly'"
                     class="border-r-2 border-blue-600 text-white  hover:bg-blue-700 focus:ring-4 focus:outline-none  text-center bg-blue-600 dark:hover:bg-blue-500 focus:ring-blue-800 text-sm font-semibold py-4 px-6 rounded-l-lg">
                     Monthly
                 </button>
-                <button
+                <button @click="duration = 'annually'"
                     class="border-none text-white  focus:ring-4 focus:outline-none  text-center bg-blue-700 hover:bg-blue-500 focus:ring-blue-800 text-sm font-semibold py-4 px-6 rounded-r-lg">
                     Annual
                 </button>
@@ -77,7 +78,7 @@ const openGateway = () => {
                     <div class=" mt-3 pb-6 px-6">
                         <button class="bg-blue-600 rounded-lg py-3 px-4 text-white text-sm font-semibold">{{
                             props.signedUser?.upgraded
-                                ? 'Downgrade +' : 'Current Plan' }}
+                                ? 'Downgrade -' : 'Current Plan' }}
                         </button>
                     </div>
                 </div>
@@ -119,8 +120,8 @@ const openGateway = () => {
                         </div>
                     </div>
                     <p class="text-4xl text-white font-semibold pl-6 mt-auto">
-                        <span class="inline-block  text-2xl -translate-y-3 -translate-x-1">$</span>9.99 <span
-                            class="text-xl inline-block -translate-x-2">/Mo</span>
+                        <span class="inline-block  text-2xl -translate-y-3 -translate-x-1">$</span>{{duration == 'monthly' ? '9.99' : '99.99'}} <span
+                            class="text-xl inline-block -translate-x-2">{{duration == 'monthly' ? '/Mo' : '/Yr'}}</span>
                     </p>
 
                     <div class=" mt-3 pb-6 px-6">

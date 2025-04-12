@@ -83,7 +83,9 @@ async function getGroupRequests($channel_id: number) {
                 <img src="../assets/exit.svg" class="h-8 my-auto">
             </button>
         </div>
-        <img src="../assets/g2.svg" class="h-24 mt-6">
+        <img src="../assets/g2.svg" class="h-24 mt-6" v-if="channelItemObj?.type == 'group'">
+        <img src="../assets/prof3.svg" class="h-24 mt-6" v-else>
+        
         <div class="text-2xl font-semibold justify-center self-center  mt-4">{{ props.channelItemObj?.name }}</div>
         <div class="flex mt-3 text-gray-300 border-t-1 border-gray-950" v-if="channelItemObj?.type == 'group'">
             <button :class="`${!displayRequests ? 'bg-gray-600' : 'bg-gray-925'} w-1/2 h-8 m-auto  text-xl `"

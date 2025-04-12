@@ -22,11 +22,11 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         //logs every query and its execution time in ms
-        /*
+        
         DB::listen(function ($query) {
             error_log($query->sql);     
             error_log($query->time);    
         });
-        */
+        
     }
 }

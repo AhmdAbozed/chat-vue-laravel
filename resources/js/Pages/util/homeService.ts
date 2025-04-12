@@ -13,9 +13,10 @@ export async function getChannels() {
     }
     const endpoint = location.protocol + "//" + location.host + "/_api/chats/";
     //const endpoint = 'https://api.backblazeb2.com/b2api/v3/b2_authorize_account'
-    console.log(endpoint)
     const res = await fetch(endpoint, options);
+    
     if (res.status === 200) {
+        console.log('fetched channels')
         const toJson = await res.json();
         return toJson
     }

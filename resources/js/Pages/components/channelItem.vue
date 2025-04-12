@@ -14,7 +14,7 @@ const activeStatus = ref(false)
 
 watch(activeChannel, () => {
     //is this channel the active channel or not? for highlighting
-    if (activeChannel) {
+    if (activeChannel && activeChannel.value) {
         activeStatus.value = activeChannel.value.id == props.channelItemObj!.id
         if (activeStatus.value) {
             unreadCount.value! = 0

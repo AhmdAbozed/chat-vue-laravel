@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 /*
@@ -30,9 +31,11 @@ Route::middleware('auth:sanctum')->get('/upgrade', ['as'=>'subscriptionPage', 'u
 }]);
 
 Route::get('/login',['as'=>'login', 'uses'=>function () {
+    if(Auth::check())redirect('homePage');
     return Inertia::render('auth/LogIn');
 }]);
 
 Route::get('/signup', function () {
+    if(Auth::check())redirect('homePage');
     return Inertia::render('auth/SignUp');
 });

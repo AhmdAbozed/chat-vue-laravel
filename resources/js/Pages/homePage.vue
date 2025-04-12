@@ -32,9 +32,24 @@ provide('currentChannelInjection', currentChannel)
 onMounted(async () => {
     //onMount, set all channels to listen for new messages for updating unread count, without fetching messages.
     const fetchedChannels = await getChannels();
-    fetchedChannels.forEach((channel: channelObj) => {
-        listenToMsgChannel(channel, false);
-    });
+    Promise.all(
+        fetchedChannels.map(async (channel: channelObj, index: number) => {
+            console.log('sup' + index)
+            const options: RequestInit = {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Credentials': 'true',
+                    'Access-Control-Allow-Origin': 'true',
+                },
+                credentials: "include",
+            }
+            const endpoint = location.protocol + "//" + location.host + "/_api/nothing/";
+            //const endpoint = 'https://api.backblazeb2.com/b2api/v3/b2_authorize_account'
+            const res = fetch(endpoint, options);
+        })
+    );
     channels.value = fetchedChannels;
     currentChannel.value = fetchedChannels[0]
 
@@ -44,7 +59,7 @@ async function setMessages(channel: channelObj, withFileToken: boolean, reset_un
     const newMsgs = await getMsgs(channel, withFileToken, reset_unread);
     channel.messages = newMsgs.messages;
     //if fileToken for BB auth is missing, fetch it otherwise set to false
-    if(withFileToken){
+    if (withFileToken) {
         channel.file = { fileToken: newMsgs.fileToken, fileUrl: newMsgs.fileUrl };
     }
 }
@@ -70,7 +85,7 @@ function listenToMsgChannel(chatChannel: channelObj, updateMessages: boolean) {
             console.log("caught something?", e)
             const newChannelObj = channels.value!.find((channel: channelObj) => channel.id == e.channel_id)
             const isCurrentChannel = currentChannel.value?.id == newChannelObj!.id
-            
+
             //If true, update message on catch, only enabled for opened channels, while unopened ones only update unread count
             if (updateMessages) {
                 //if it isn't current displayed Channel, don't reset unread as user hasn't seen them yet
@@ -119,12 +134,31 @@ async function sendMsgs(e: Event) {
         console.log('message sent', json);
     }
 }
+async function signout() {
+
+    const response = await fetch('/_api/user/signout', {
+        method: 'POST',
+        headers: {
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.split("; ").find((row) => row.startsWith("XSRF-TOKEN="))!.split("=")[1]!),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}) // Sending an empty JSON object
+    });
+
+    const data = await response.text();
+    if (response.status === 200) {
+        window.location.href = '/login'
+    } else {
+        console.error('Error:', response.statusText);
+        return false;
+    }
+}
 </script>
 <template>
     <div class="grid grid-rows-1 sm:flex grid-cols-1 h-svh">
 
         <channelsList :showList="showList" :channelItemsList="channels"
-            @newChatAdded="async () => { console.log('second emit'); const chats = await getChannels(); channels = chats; }"
+            @newChatAdded="async () => { console.log('second emit of newchatadded'); const chats = await getChannels(); channels = chats; }"
             @setChannel="(channelId: number) => { currentChannel = channels!.find((channel: channelObj) => channel.id == channelId) }"
             @setShowList="(newShowList: any) => { console.log('changing showlist: ' + newShowList); showList = newShowList; }">
         </channelsList>
@@ -143,16 +177,24 @@ async function sendMsgs(e: Event) {
                         <div class="text-sm text-gray-400">Click here for details</div>
                     </div>
                 </div>
-                <button
-                    class="bg-blue-950 rounded-full text-sm pt-[0.35rem] pb-2 px-3 ml-auto my-auto hover:bg-blue-800 text-blue-100"><a
-                        href="./upgrade">Upgrade</a></button>
+                <a href="./upgrade" class="ml-auto">
+                    <button
+                        class="bg-blue-950 rounded-full text-sm pt-[0.35rem] pb-2 px-3 ml-auto my-auto hover:bg-blue-800 text-blue-100">{{
+            signedUser!.upgraded ? 'Upgraded' : 'Upgrade' }}</button>
+                </a>
+                <button class="rounded-full text-sm pt-[0.35rem] pb-2 px-3 my-auto hover:text-blue-500 text-blue-100"
+                    @click="signout">Signout
+                </button>
+
             </section>
 
-            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto mb-2"
+            <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-y-auto mb-2 mx-2 lg:mx-4"
                 v-if="currentChannel && currentChannel.messages && currentChannel.file">
-                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="currentChannel.file!" v-for="messageObj in currentChannel.messages!" :key="messageObj.id">
+                <chatMsg :msgObj="messageObj" :channelId="currentChannel.id" :fileHeaderData="currentChannel.file!"
+                    v-for="messageObj in currentChannel.messages!" :key="messageObj.id">
                 </chatMsg>
             </section>
+         
             <section class=" h-full items-start flex flex-col-reverse flex-nowrap overflow-auto"
                 v-else-if="isLoadingMessages">
                 <img src="@/Pages/assets/roller.svg" class="mx-auto mb-10 opacity-20 w-4/12 max-w-32"></img>
@@ -175,7 +217,8 @@ async function sendMsgs(e: Event) {
                 </button>
 
             </section>
-            <form class="flex p-2 bg-gray-900" @submit="(e) => { if(currentChannel)sendMsg(e, currentChannel?.id, uploadedFile); uploadedFile = null; }">
+            <form class="flex p-2 bg-gray-900"
+                @submit="(e) => { if (currentChannel) sendMsg(e, currentChannel?.id, uploadedFile); uploadedFile = null; }">
 
                 <label htmlFor="img-upload" class="cursor-pointer">
                     <img src="@/Pages/assets/plus5.svg" class="h-8" alt="">
@@ -185,9 +228,9 @@ async function sendMsgs(e: Event) {
                 </label>
 
                 <input type="text"
-                    class="pl-3 text-gray-300 h-8 flex-grow bg-gray-700 border-2 border-gray-800 rounded-full"
-                    name="message" placeholder="Enter Message..">
-                <input type="submit" value="Submit" class="ml-1 text-gray-400">
+                    class="pl-3 text-gray-300 h-8 flex-grow bg-gray-700 border-2 border-gray-800 rounded-full focus:ring-0 focus:outline-none focus:ring-blue-900"
+                    name="message" placeholder="Enter Message.." required>
+                <input type="submit" value="Submit" class="ml-1 text-gray-400 cursor-pointer" >
 
             </form>
 

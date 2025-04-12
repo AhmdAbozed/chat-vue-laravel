@@ -30,8 +30,13 @@ class UserService
         $channel2 = $this->channel->query()->create(['type' => 'private']);
         $channel2->users()->attach($user->id);
         $channel2->users()->attach(2);
-
+       
         Auth::attempt(['name' => $username, 'password' =>$password]); 
-        return $user;
+        if(auth::check()){
+            error_log('authenticated');
+            return $user;
+        }else{
+            error_log('not auth');
+        }
     }
 }

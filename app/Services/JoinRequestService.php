@@ -42,9 +42,14 @@ class JoinRequestService
     }
     public function createJoinRequest(int $user_id, string $channelName)
     {
-        $channel = $this->channel->query()->where('name', $channelName)->firstOrFail();
-        if ($channel->type == 'group') {
+        $channel = $this->channel->query()->where('name', $channelName)->first();
+        if ($channel) {
+            if($channel->users()->where('user_id',$user_id))abort(400, 'Already a member');
+            if($channel->requests()->where('user_id',$user_id))abort(400, 'Request already sent');
+           
             return $channel->requests()->create(['user_id' => $user_id, 'status' => 'pending']);
+        }else{
+            abort(404, 'Group not found');
         }
     }
 
